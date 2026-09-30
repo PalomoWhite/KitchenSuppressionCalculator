@@ -1,0 +1,21 @@
+
+#Carpeta de entorno virtual
+/.venv
+
+#Archivos que genera python
+ansul/__pycache__
+
+# Basura de macOS
+*.DS_Store
+
+#Carpetas personales de mi equipo
+/.idea/
+
+#Carpetas de compilación de Pyinstaller
+/build/
+/dist/
+
+#Carpetas de compilación de andriod
+android/.buildozer
+android/bin
+
