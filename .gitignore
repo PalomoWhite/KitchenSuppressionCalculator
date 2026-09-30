@@ -3,7 +3,7 @@
 /.venv
 
 #Archivos que genera python
-ansul/__pycache__
+__pycache__/
 
 # Basura de macOS
 *.DS_Store
