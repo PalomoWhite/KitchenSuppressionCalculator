@@ -333,6 +333,23 @@ def test_kitchen_and_project_summary():
     check('Resumen de proyecto: capacidad total de flujo = 6', ps['totalFlow'] == 6)
 
 
+def test_fits_long_side():
+    # Regla "lado mayor + área" del Nozzle Application Chart (Manual R-102,
+    # pag. 4-29 a 4-31). Estufa de 24 x 30 in: lado mayor 30, área 720 in^2.
+    check('24x30 vs 1N alta (32 / 384) -> no cabe por área',
+          E.fits_long_side_area(24, 30, 32, 384) is False)
+    check('24x30 vs 245 alta (28 / 672) -> no cabe (lado y area)',
+          E.fits_long_side_area(24, 30, 28, 672) is False)
+    check('24x30 vs 260 media (32 / 768) -> si cabe',
+          E.fits_long_side_area(24, 30, 32, 768) is True)
+    # Tolerancia de redondeo: un error diminuto en el limite de sí debe caber...
+    check('Lado 32 + error de redondeo -> sí cabe',
+          E.fits_long_side_area(24, 32 + 1e-12, 32, 768) is True)
+    # Un exceso real NO es aceptable.
+    check('Lado 32.5 (exceso real) -> no cabe',
+          E.fits_long_side_area(24, 32.5, 32, 768) is False)
+
+
 def run_all():
     tests = [v for k, v in globals().items() if k.startswith('test_') and callable(v)]
     for t in tests:
