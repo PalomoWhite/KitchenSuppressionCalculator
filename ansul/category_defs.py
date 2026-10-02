@@ -66,7 +66,7 @@ def _fryer_fields(v):
             {'key': 'overallD', 'type': 'number', 'label': 'Largo total con escurridor (in)'},
             {'key': 'overallL', 'type': 'number', 'label': 'Ancho total con escurridor (in)'},
         ]
-    fields.append({'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1,
+    fields.append({'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
                     'hint': 'Deje el valor en 1: si la freidora es más grande de lo que cubre una sola boquilla, '
                             'el programa calcula automáticamente cuántos módulos (zonas) se necesitan y con qué '
                             'boquilla, dividiendo el riesgo según el método del manual (pág. 4-10 a 4-12). Aumente '
@@ -97,7 +97,7 @@ def _tiltskillet_fields(v):
     return [
         {'key': 'd1', 'type': 'number', 'label': 'Ancho (in)', 'hint': 'De lado a lado'},
         {'key': 'd2', 'type': 'number', 'label': 'Largo (in)', 'hint': 'De frente a fondo'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1,
+        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
          'hint': 'Deje el valor en 1: el programa divide automáticamente el sartén en tantas zonas (módulos) como '
                  'se necesiten según el número de boquillas requerido (no aplica el límite de 864 in² de la '
                  'freidora). Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'},
@@ -121,7 +121,7 @@ def _range_fields(v):
          'hint': 'Solo de referencia: no cambia el cálculo de boquillas, que depende únicamente de las medidas.'},
         {'key': 'd1', 'type': 'number', 'label': 'Ancho del área de cocción (in)'},
         {'key': 'd2', 'type': 'number', 'label': 'Largo del área de cocción (in)'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1,
+        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
          'hint': 'Deje el valor en 1: si la estufa es más grande de lo que cubre una sola boquilla (por ejemplo, '
                  'una de 6 quemadores), el programa modulariza automáticamente el riesgo en tantas zonas como se '
                  'necesiten y muestra todas las opciones de boquilla que apliquen (alta, media o baja '
@@ -142,7 +142,7 @@ def _griddle_fields(v):
     return [
         {'key': 'd1', 'type': 'number', 'label': 'Ancho de la superficie (in)'},
         {'key': 'd2', 'type': 'number', 'label': 'Largo de la superficie (in)'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1,
+        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
          'hint': 'Deje el valor en 1: el programa modulariza automáticamente una plancha sobredimensionada. '
                  'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'},
     ]
@@ -152,7 +152,7 @@ def _griddle_fields(v):
 # Parrilla / Grill (gas o eléctrica)
 # --------------------------------------------------------------------------
 
-_MODULES_FIELD = {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1,
+_MODULES_FIELD = {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
                    'hint': 'Deje el valor en 1: el programa modulariza automáticamente un riesgo sobredimensionado. '
                            'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'}
 

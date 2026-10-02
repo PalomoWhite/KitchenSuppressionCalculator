@@ -350,6 +350,17 @@ def test_fits_long_side():
           E.fits_long_side_area(24, 32.5, 32, 768) is False)
 
 
+def test_modules_field_is_optional():
+    # El campo "Número de módulos (opcional)" no debe mostrar asterisco
+    # de obligatorio en ninguna categoría (form_widgets usa 'required').
+    for categoria, definicion in CD.CATEGORY_DEFS.items():
+        for valores in ({}, {'hasDripboard': True}):
+            for campo in definicion['fields'](valores):
+                if campo['key'] == 'modules':
+                    check(f'{categoria}: campo módulos no obligatorio',
+                          campo.get('required', True) is False )
+
+
 def run_all():
     tests = [v for k, v in globals().items() if k.startswith('test_') and callable(v)]
     for t in tests:
