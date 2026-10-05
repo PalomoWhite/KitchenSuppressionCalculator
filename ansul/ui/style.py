@@ -21,7 +21,6 @@ STYLE_QSS = f"""
 QWidget {{
     background: {BG};
     color: {TEXT};
-    font-family: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
     font-size: 13px;
 }}
 
