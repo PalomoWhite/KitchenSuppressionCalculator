@@ -5,7 +5,7 @@ especificaciones declarativas de ansul.category_defs (lista de dicts con
 'key', 'type', 'label', etc.) — es el equivalente en Qt de las funciones
 numInput()/selectInput()/toggleInput() de AnsulCalc.html.
 """
-from PySide6.QtCore import Qt, QLocale, Signal
+from PySide6.QtCore import Qt, QLocale, Signal, QTimer
 from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (QWidget, QFormLayout, QLineEdit, QComboBox, QCheckBox,
                                 QLabel, QVBoxLayout)
@@ -122,6 +122,10 @@ class DynamicForm(QWidget):
     def _on_value_changed(self, key, value):
         self._values[key] = value
         if key in self._reflow_keys:
-            self.structure_changed.emit()
+            # No reconstruir el formulario aquí mismo: el widget que cambió
+            # (p. ej. la casilla "¿Tiene escurridor?") sigue procesando el
+            # clic, y reconstruir lo destruiría → cierre de la app en macOS.
+            # singleShot(0) espera a que termine el clic.
+            QTimer.singleShot(0, self.structure_changed.emit)
         else:
             self.changed.emit()
