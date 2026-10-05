@@ -7,10 +7,11 @@ cálculo (boquillas, flow numbers, selección de tanques) se comporte como
 se espera para una serie de casos de referencia tomados del manual ANSUL
 R-102 y de la Hoja Resumen F-2015158-01_LAS.
 
-Ejecutar con:  python -m pytest tests/  (o simplemente: python tests/test_engine.py)
+Ejecutar con:  python -m pytest tests/ (o simplemente: python tests/test_engine.py)
 """
 import os
 import sys
+import tempfile
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -335,7 +336,7 @@ def test_kitchen_and_project_summary():
 
 def test_fits_long_side():
     # Regla "lado mayor + área" del Nozzle Application Chart (Manual R-102,
-    # pag. 4-29 a 4-31). Estufa de 24 x 30 in: lado mayor 30, área 720 in^2.
+    # page 4-29 a 4-31). Estufa de 24 x 30 in: lado mayor 30, área 720 in^2.
     check('24x30 vs 1N alta (32 / 384) -> no cabe por área',
           E.fits_long_side_area(24, 30, 32, 384) is False)
     check('24x30 vs 245 alta (28 / 672) -> no cabe (lado y area)',
@@ -359,6 +360,46 @@ def test_modules_field_is_optional():
                 if campo['key'] == 'modules':
                     check(f'{categoria}: campo módulos no obligatorio',
                           campo.get('required', True) is False )
+
+
+def test_load_corrupt_json_keeps_backups():
+    # Un ansulcalc_db.json dañado NO debe perderse: load() debe apartarlo
+    # con otro nombre antes de que cualquier save() escriba un archivo nuevo.
+    import glob
+    import tempfile
+    from ansul.store import Store
+    with tempfile.TemporaryDirectory() as tmp:
+        ruta = f'{tmp}/db.json'
+        danado = '{"projects": [{"name": "Hotel'
+        with open(ruta, 'w', encoding='utf-8') as f:
+            f.write(danado)
+
+        store = Store(path=ruta)
+        store.load()
+        store.add_project('Proyecto nuevo')
+
+        respaldos = glob.glob(f'{tmp}/db.corrupt-*.json')
+        check('JSON dañado -> se aparta una copia', len(respaldos) == 1)
+        with open(respaldos[0], encoding='utf-8') as f:
+            check('La copia conserva el contenido original', f.read() == danado)
+        check('Store registra dónde quedó la copia', str(store.corrupt_backup) == respaldos[0])
+
+
+def test_load_valid_json_returns_database():
+    import json
+    import tempfile
+    from ansul.store import Store
+    with tempfile.TemporaryDirectory() as tmp:
+        ruta = f'{tmp}/db.json'
+        with open(ruta, 'w', encoding='utf-8') as f:
+            json.dump({'projects': [{'name': 'Hotel', 'kitchens': []}]}, f)
+
+        store = Store(path=ruta)
+        datos = store.load()
+        check('load() regresa los datos', datos is not None)
+        check('load() conserva el proyecto guardado', datos['projects'][0]['name'] == 'Hotel')
+        check('load() agrega customCatalog si falta', 'customCatalog' in datos)
+        check('Archivo sano -> no hay respaldo corrupto', store.corrupt_backup is None)
 
 
 def run_all():

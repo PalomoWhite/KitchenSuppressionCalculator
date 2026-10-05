@@ -47,18 +47,27 @@ class Store:
     def __init__(self, path=None):
         self.path = Path(path) if path else (default_data_dir() / 'ansulcalc_db.json')
         self.data = None
+        self.corrupt_backup = None
 
     # ------------------------------ Carga / guardado -----------------------
 
     def load(self):
+        self.corrupt_backup = None
         try:
             if self.path.exists():
                 with open(self.path, 'r', encoding='utf-8') as f:
                     self.data = json.load(f)
             else:
                 self.data = {'projects': [], 'lastResponsible': ''}
-        except (json.JSONDecodeError, OSError):
+        except json.JSONDecodeError:
             self.data = {'projects': [], 'lastResponsible': ''}
+            # El archivo dañado se aparta con un nombre nuevo, no se sobreescribe.
+            sello = time.strftime('%Y%m%d-%H%M%S')
+            respaldo = self.path.with_name(f'{self.path.stem}.corrupt-{sello}.json')
+            os.replace(self.path, respaldo)
+            self.corrupt_backup = respaldo
+        except OSError:  # No se pudo leer el archivo: NO continuar con datos vacíos,
+            raise        # el siguiente save() sobrescribirá el archivo.
 
         if 'projects' not in self.data:
             self.data['projects'] = []
