@@ -22,8 +22,9 @@ Para ejecutar:
     python main.py
 """
 import sys
+import os
 
-from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QApplication, QMessageBox
 
 from ansul.store import Store
 from ansul.ui.main_window import MainWindow
@@ -36,11 +37,32 @@ def main():
     app.setOrganizationName('AnsulFlowCalculator')
     app.setStyleSheet(STYLE_QSS)
 
-    store = Store()
-    store.load()
+    store = Store(path=os.environ.get('ANSULCALC_DB'))
+    try:
+        store.load()
+    except OSError as e:
+        QMessageBox.critical(
+            None,
+            'No se pudo abrir la base de datos',
+            f'No fue posible leer el archivo de proyectos: \n{store.path}\n\n'
+            f'Detalle: {e}\n\n'
+            'El programa se cerrara para no sobrescribir sus datos. '
+            'Verifique que el archivo exista y tenga permisos de lectura. '
+        )
+        sys.exit(1)
 
     window = MainWindow(store)
     window.show()
+
+    if store.corrupt_backup:
+        QMessageBox.warning(
+            window,
+            'El archivo de proyectos esta dañado',
+            'El archivo de proyectos estaba dañado y no se pudo leer.\n\n'
+            f'Se guardó una copia intacta en: \n{store.path}\n\n'
+            'El programa inició con una lista vacía. Conserve esa copia '
+            'y comuníquese con soporte técnico para intentar recuperarla'
+        )
 
     sys.exit(app.exec())
 
