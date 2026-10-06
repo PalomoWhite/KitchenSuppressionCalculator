@@ -59,7 +59,7 @@ def main():
             window,
             'El archivo de proyectos esta dañado',
             'El archivo de proyectos estaba dañado y no se pudo leer.\n\n'
-            f'Se guardó una copia intacta en: \n{store.path}\n\n'
+            f'Se guardó una copia intacta en: \n{store.corrupt_backup}\n\n'
             'El programa inició con una lista vacía. Conserve esa copia '
             'y comuníquese con soporte técnico para intentar recuperarla'
         )
