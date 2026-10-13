@@ -73,8 +73,11 @@ def test_wok_only_second_option_fits():
 
 
 def test_salamander_positional_choice():
-    c = CD.CATEGORY_DEFS['salamander']['compute']({'length': '30', 'width': '15'})
-    check('Salamandra 30x15 -> 2 opciones disponibles', len(c['matches']) == 2)
+    # Corregido: antes usaba length=30 (fondo) x width=15 (ancho), lo que invertía
+    # la orientación del manual (pág. 4-24). Lo que se quería probar es una
+    # salamandra de 30 in de ancho x 15 in de fondo -> 2 opciones (1F y 1N local).
+    c = CD.CATEGORY_DEFS['salamander']['compute']({'length': '15', 'width': '30'})
+    check('Salamandra 15 fondo x 30 ancho -> 2 opciones disponibles', len(c['matches']) == 2)
     r0 = CD.CATEGORY_DEFS['salamander']['result_from_choice'](c, 0)
     r1 = CD.CATEGORY_DEFS['salamander']['result_from_choice'](c, 1)
     check('Salamandra opción 0 distinta de opción 1', r0['detail'] != r1['detail'])
@@ -400,6 +403,25 @@ def test_load_valid_json_returns_database():
         check('load() conserva el proyecto guardado', datos['projects'][0]['name'] == 'Hotel')
         check('load() agrega customCatalog si falta', 'customCatalog' in datos)
         check('Archivo sano -> no hay respaldo corrupto', store.corrupt_backup is None)
+
+
+def test_salamander_orientation_manual():
+    # Manual R-102 (2017, rev. 13) pág. 4-24: límites de la cámara interna.
+    #   1N cenital: 16 in de fondo x 29 in de ancho
+    #   1F cenital y 1N local: 15 in de fondo x 31 in de ancho
+    # En el formulario: 'length' = fondo (de frente a fondo), 'width' = ancho (de lado a lado).
+    compute = CD.CATEGORY_DEFS['salamander']['compute']
+
+    c = compute({'length': '16', 'width': '29'})
+    ids = [m['id'] for m in c['matches']]
+    check('Salamandra 16 fondo x 29 ancho -> admite 1N cenital', 'overhead1N' in ids)
+
+    c = compute({'length': '29', 'width': '16'})
+    check('Salamandra 29 fondo x 16 ancho -> ninguna opción', c['ok'] is False)
+
+    c = compute({'length': '15', 'width': '31'})
+    ids = [m['id'] for m in c['matches']]
+    check('Salamandra 15 fondo x 31 ancho -> 1F y 1N local', set(ids) == {'overhead1F', 'local1N'})
 
 
 def run_all():

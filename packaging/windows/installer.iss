@@ -13,7 +13,7 @@
 ; Cambia MyAppVersion cuando publiques una nueva versión.
 
 #define MyAppName "Ansul Flow Calculator"
-#define MyAppVersion "1.1.0"
+#define MyAppVersion "1.2.0"
 #define MyAppPublisher "Tu empresa"
 #define MyAppExeName "AnsulFlowCalculator.exe"
 ; Ruta a la carpeta que generó PyInstaller (relativa a este .iss)

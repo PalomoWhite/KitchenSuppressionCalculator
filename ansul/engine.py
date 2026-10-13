@@ -412,10 +412,12 @@ def calc_upright_broiler(length, width):
 
 # -------------------------------- Salamandra ---------------------------------
 
-def calc_salamander(length, width):
+def calc_salamander(depth, width):
+    """depth = fondo interno (de frente a fondo);
+    width = ancho interno (de lado a lado) Límites de la cámara interna según el manual R-102, pág. 4-24."""
     matches = []
     for i, o in enumerate(D.SALAMANDER_OPTIONS):
-        if length <= o['maxLength'] and width <= o['maxWidth']:
+        if depth <= o['maxDepth'] and width <= o['maxWidth']:
             m = dict(o)
             m['idx'] = i
             matches.append(m)

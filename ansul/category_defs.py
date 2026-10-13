@@ -319,8 +319,8 @@ def _uprightbroiler_not_fit(v, c):
 
 def _salamander_fields(v):
     return [
-        {'key': 'length', 'type': 'number', 'label': 'Largo interno (in)', 'hint': 'De frente a fondo'},
-        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'De lado a lado'},
+        {'key': 'length', 'type': 'number', 'label': 'Fondo interno (in)', 'hint': 'Camara interna, de frente a fondo'},
+        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'Camara interna, de lado a lado'},
     ]
 
 
@@ -587,7 +587,7 @@ CATEGORY_DEFS = {
         'required_fields': lambda v: ['length', 'width'],
         'compute': _salamander_compute,
         'choice_label': lambda m: m['label'],
-        'choice_sub': lambda m: f"Superficie máx. protegida: {m['maxLength']} × {m['maxWidth']} in",
+        'choice_sub': lambda m: f"Superficie máx. protegida: {m['maxWidth']} × {m['maxDepth']} in",
         'result_from_choice': lambda c, i: (E.salamander_result(c['matches'][i]) if 0 <= i < len(c['matches']) else None),
         'not_fit_msg': lambda v, c: 'Ninguna de las 3 opciones de salamandra cubre estas dimensiones.',
     },

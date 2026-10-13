@@ -125,11 +125,11 @@ UPRIGHT_BROILER = {'nozzle': '1/2N', 'qty': 2, 'maxLength': 32.5, 'maxWidth': 30
                     'label': 'Asador vertical / Salamandra (2 boquillas 1/2N)'}
 
 SALAMANDER_OPTIONS = [
-    {'id': 'overhead1N', 'nozzle': '1N', 'qty': 1, 'maxLength': 29, 'maxWidth': 16,
+    {'id': 'overhead1N', 'nozzle': '1N', 'qty': 1, 'maxWidth': 29, 'maxDepth': 16,
      'label': 'Cenital 1N (6-12 in al frente, 0-12 in de altura)'},
-    {'id': 'overhead1F', 'nozzle': '1F', 'qty': 1, 'maxLength': 31, 'maxWidth': 15,
+    {'id': 'overhead1F', 'nozzle': '1F', 'qty': 1, 'maxWidth': 31, 'maxDepth': 15,
      'label': 'Cenital 1F (8-12 in al frente, 12-18 in de altura)'},
-    {'id': 'local1N', 'nozzle': '1N', 'qty': 1, 'maxLength': 31, 'maxWidth': 15,
+    {'id': 'local1N', 'nozzle': '1N', 'qty': 1, 'maxWidth': 31, 'maxDepth': 15,
      'label': 'Lateral / local 1N (montada al costado)'},
 ]
 
