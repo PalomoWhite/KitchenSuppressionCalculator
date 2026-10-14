@@ -587,7 +587,7 @@ CATEGORY_DEFS = {
         'required_fields': lambda v: ['length', 'width'],
         'compute': _salamander_compute,
         'choice_label': lambda m: m['label'],
-        'choice_sub': lambda m: f"Superficie máx. protegida: {m['maxWidth']} × {m['maxDepth']} in",
+        'choice_sub': lambda m: f"Cámara interna máx.: {m['maxWidth']} in de ancho × {m['maxDepth']} in de fondo",
         'result_from_choice': lambda c, i: (E.salamander_result(c['matches'][i]) if 0 <= i < len(c['matches']) else None),
         'not_fit_msg': lambda v, c: 'Ninguna de las 3 opciones de salamandra cubre estas dimensiones.',
     },
