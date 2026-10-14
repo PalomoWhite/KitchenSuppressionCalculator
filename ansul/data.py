@@ -124,6 +124,12 @@ CHAIN_BROILER_OPTIONS = {
 UPRIGHT_BROILER = {'nozzle': '1/2N', 'qty': 2, 'maxLength': 32.5, 'maxWidth': 30,
                     'label': 'Asador vertical / Salamandra (2 boquillas 1/2N)'}
 
+# ---- Salamandra (Manual R-102 2017, rev. 13, pág. 4-24) --------------------
+# Límites de la CÁMARA INTERNA del asador:
+#   maxWidth = ancho, de lado a lado ("wide")
+#   maxDepth = fondo, de frente a atrás ("deep")
+# Nota: para la 1F el texto dice 15 1/2 in de fondo y la tabla resumen 15 in;
+# se usa 15 in (valor más conservador).
 SALAMANDER_OPTIONS = [
     {'id': 'overhead1N', 'nozzle': '1N', 'qty': 1, 'maxWidth': 29, 'maxDepth': 16,
      'label': 'Cenital 1N (6-12 in al frente, 0-12 in de altura)'},

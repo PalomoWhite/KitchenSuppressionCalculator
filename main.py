@@ -46,7 +46,7 @@ def main():
             'No se pudo abrir la base de datos',
             f'No fue posible leer el archivo de proyectos: \n{store.path}\n\n'
             f'Detalle: {e}\n\n'
-            'El programa se "cerrara" para no sobrescribir sus datos. '
+            'El programa se cerrará para no sobrescribir sus datos. '
             'Verifique que el archivo exista y tenga permisos de lectura. '
         )
         sys.exit(1)
