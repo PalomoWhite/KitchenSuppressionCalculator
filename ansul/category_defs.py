@@ -319,8 +319,8 @@ def _uprightbroiler_not_fit(v, c):
 
 def _salamander_fields(v):
     return [
-        {'key': 'length', 'type': 'number', 'label': 'Fondo interno (in)', 'hint': 'Camara interna, de frente a fondo'},
-        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'Camara interna, de lado a lado'},
+        {'key': 'length', 'type': 'number', 'label': 'Fondo interno (in)', 'hint': 'Cámara interna, de frente a fondo.'},
+        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'Cámara interna, de lado a lado.'},
     ]
 
 
