@@ -45,10 +45,10 @@
 | Charbroiler, Radiant                          | 36 in * 24 in                             | N-1HP  | BLUE   |
 | Charbroiler, Lava Rock                        | 24 in * 24 in                             | N-2HP  | GREEN  |
 | Charbroiler, Upright (Salamander)             | 36 in * 24 in                             | N-1LP  | RED    |
-* Coverages can be used with a back-shelf or another type of obstruction,
+- \* Coverages can be used with a back-shelf or another type of obstruction,
 as long as the discharge pattern is not affected.
-* Cover must not interfere with nozzle discharge.
-* For the High Proximity Back-shelf coverage the shelf shall not exceed more than 11"(28cm) over the back edge of the
+- \*\* Cover must not interfere with nozzle discharge.
+- \*\*\* For the High Proximity Back-shelf coverage the shelf shall not exceed more than 11"(28cm) over the back edge of the
 burners and be a minimum of 16"(41cm) from the top of the appliance.
 
 
@@ -75,7 +75,7 @@ the number of flow points determined by the risks being covered and the  necessa
 | Allowable Pipe Sizes       | Volume Per Foot         |
 |----------------------------|-------------------------|
 | 3/8 in. (17.1mm OD)   pipe | 37.5 mL./ft. (123 mL/m) |
-| 1/2 in. (21.3 mm OD)  pipe | 58.8 mL./ft. (196 mL/m) |
+| 1/2 in. (21.3 mm OD)  pipe | 59.8 mL./ft. (196 mL/m) |
 
 - Maximum Piping Per Cylinder Size
 
@@ -85,24 +85,37 @@ the number of flow points determined by the risks being covered and the  necessa
 | BFR-10        | 10                    | 2500                       | 2000                                                   |
 | BFR-15        | 15                    | 2800*                      | 2500                                                   |
 | BFR-20        | 20                    | 2800*                      | 2500                                                   |
+- \* Total Volume of 3/8" (17.1 mm OD) piping allowed on the BFR-15 or BFR-20 is 2500.
 
 
-## 4.1 Piping limitations General Requirements (pag.3-13)
+## 4.2 Minimum Piping Requirements (Pag. 3-13)
 
-- All piping must be either 3/8" (17.1 mm OD) or 1/2" (21.3 mm OD)
+- Note: This ONLY apply when protecting a wok, deep fat fryer or range.
+
+1. Minimum number of elbows before the closest nozzle protecting a fryer, range or wok shall be five(5).
+2. The minimum piping volume before the closest nozzle protecting a fryer, range or wok shall not be less than 360 ml.
+3. The total system pipe volume shall not be less than 660 mL for all cylinder sizes.
+4. A system shall have minimum of three (3) flow points.
+
+
+
+## 4.2 Piping limitations General Requirements (pag.3-13)
+
+
+- All piping must be either 3/8" (17.1 mm OD) or 1/2" (21.3 mm OD).
 
 | Max number of elbows |     -     |
 |----------------------|-----------|
 | BFR-5                | 20 elbows |
 | BFR-10/15/20         | 25 elbows |
 
-- The maximum number of elbows between any two nozzles is five (6).
+- The maximum number of elbows between any two nozzles is five (5).
 - The maximum vertical rise of the supply line is 10 feet(3 m),
-this is te maximum elevation difference between tank and the highest
+this is the maximum elevation difference between tank and the highest
 or lowest nozzle point in the piping system.
-- The maximum vertical rise of any nozzle above the supply lime is 2 feet(0.6m).
+- The maximum vertical rise of any nozzle above the supply line is 2 feet(0.6m).
 - When different pipe size is used in the same system, the largest diameter pipe must be closest
 to the cylinder and sizes are to decrease as they reach the nozzle. So piping always runs from
 large to smaller diameter.
-- Elbow(s) or swivel adaptor uses at the nozzle for aiming, DO NOT count toward the total elbows
+- Elbow(s) or swivel adaptors used at the nozzle for aiming, DO NOT count toward the total elbows
 allowed per system or the number of elbows between two (2) nozzles.
