@@ -64,10 +64,12 @@ burners and be a minimum of 16"(41cm) from the top of the appliance.
 
 ## 3.1 Cylinder selection rule
 
-- The capacity of the cylinders that protects the system is selected by taking into account
-the number of flow points determined by the risks being covered and the  necessary nozzles
-(pags. 2-1 and 3-12), as well the maximum piping limitations for each cylinder size (pag. 3-13).
-
+- The tank is selected based on the number of flow points required to protect the hazards,
+in accordance with the nozzles installed in the system. (pag. 2-1)
+- The total system volume is determined by the diameter and total length of installed piping;
+the tank must be selected based on the total piping volume. (pag. 3-13)
+- When you have a system that exceeds 20 flow points, combine and supplement with various tanks that
+have sufficient capacity to meet the requirement. (Approved by the brand and distributor)
 
 ## 4. Piping limitations (Tables pag.3-13)
 - Piping Volume Chart
