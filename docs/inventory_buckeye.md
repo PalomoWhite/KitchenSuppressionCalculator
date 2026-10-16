@@ -3,7 +3,20 @@
 ## 0. Manual Edition
 - Kitchen Mister Restaurant Cooking Area Fire Suppression System / REV. 6 / February 1, 2020
 - BFR-TM-Rev-6-212020-secured-for-web.pdf
-## 1. Nozzles (pag. 3 -12)
+
+
+## 1. Nozzles (Pag. 2-9)
+
+| Model Number | Flow Points | Band Color |
+|--------------|-------------|------------|
+| N-1HP        | 1           | BLUE       |
+| N-1LP        | 1           | RED        |
+| N-2HP        | 2           | GREEN      |
+| N-2LP        | 2           | YELLOW     |
+| N-2W         | 2           | WHITE      |
+
+
+## 2. Coverages (pag. 3 -12)
 
 | APPLICATION                                   | COVERAGE (in)                             | NOZZLE | Color  |
 |-----------------------------------------------|-------------------------------------------|--------|--------|
@@ -32,9 +45,14 @@
 | Charbroiler, Radiant                          | 36 in * 24 in                             | N-1HP  | BLUE   |
 | Charbroiler, Lava Rock                        | 24 in * 24 in                             | N-2HP  | GREEN  |
 | Charbroiler, Upright (Salamander)             | 36 in * 24 in                             | N-1LP  | RED    |
+* Coverages can be used with a back-shelf or another type of obstruction,
+as long as the discharge pattern is not affected.
+* Cover must not interfere with nozzle discharge.
+* For the High Proximity Back-shelf coverage the shelf shall not exceed more than 11"(28cm) over the back edge of the
+burners and be a minimum of 16"(41cm) from the top of the appliance.
 
 
-## 2. Cylinder Sizes
+## 3. Cylinder Sizes
 
 | Model Num. | Max. Flow Points | Weight (lbs/kg) | Mounting Bracket |
 |------------|------------------|-----------------|------------------|
@@ -44,27 +62,47 @@
 | BFR-20     | 20               | 130 lbs / 60 kg | MB-2             |
 
 
-## 2.1 Cylinder election rule
+## 3.1 Cylinder selection rule
 
 - The capacity of the cylinders that protects the system is selected by taking into account
 the number of flow points determined by the risks being covered and the  necessary nozzles
 (pags. 2-1 and 3-12), as well the maximum piping limitations for each cylinder size (pag. 3-13).
 
-## 7. Differences between Ansul and Buckeye
-- Cable installation: Buckeye allows the use of flexible, shielded cable,
-which eliminates the need for rigid conduit piping and pulleys.
-Ansul requires rigid piping and corner pulleys for any changes in direction.
 
-- Cylinder pressurization: Buckeye tanks are pressurized at the factory.
-Ansul tanks are not pressurized while in a standby state;
-they use an external gas cartridge that pressurizes the tank only at the moment of discharge.
+## 4. Piping limitations (Tables pag.3-13)
+- Piping Volume Chart
 
-- Extinguishing agent chemistry: Buckeye uses a potassium carbonate-based solution (which is highly caustic).
-Ansul uses Ansulex, a proprietary, low-pH formula. Both create a soapy layer to extinguish the fire.
+| Allowable Pipe Sizes       | Volume Per Foot         |
+|----------------------------|-------------------------|
+| 3/8 in. (17.1mm OD)   pipe | 37.5 mL./ft. (123 mL/m) |
+| 1/2 in. (21.3 mm OD)  pipe | 58.8 mL./ft. (196 mL/m) |
 
-- Actuation module: Buckeye uses a System Release Module (SRM) that can be mounted either on the cylinder or on a wall.
-Ansul controls actuation through its traditional mechanical AUTOMAN cabinet.
+- Maximum Piping Per Cylinder Size
 
-- Nozzle identification: Buckeye nozzles feature color-coded bands,
-allowing their type and capacity to be identified at a glance. With Ansul,
-the technician must read the model number engraved on the metal (e.g., 1W, 1N, etc.).
+| Cylinder Size | Max. <br/>Flow Points | Max. <br/>Pipe Volume(mL.) | Max. Pipe <br/>Vol. Between any <br/>two Nozzles.(mL.) |
+|---------------|-----------------------|----------------------------|--------------------------------------------------------|
+| BFR-5         | 5                     | 1500                       | 1000                                                   |
+| BFR-10        | 10                    | 2500                       | 2000                                                   |
+| BFR-15        | 15                    | 2800*                      | 2500                                                   |
+| BFR-20        | 20                    | 2800*                      | 2500                                                   |
+
+
+## 4.1 Piping limitations General Requirements (pag.3-13)
+
+- All piping must be either 3/8" (17.1 mm OD) or 1/2" (21.3 mm OD)
+
+| Max number of elbows |     -     |
+|----------------------|-----------|
+| BFR-5                | 20 elbows |
+| BFR-10/15/20         | 25 elbows |
+
+- The maximum number of elbows between any two nozzles is five (6).
+- The maximum vertical rise of the supply line is 10 feet(3 m),
+this is te maximum elevation difference between tank and the highest
+or lowest nozzle point in the piping system.
+- The maximum vertical rise of any nozzle above the supply lime is 2 feet(0.6m).
+- When different pipe size is used in the same system, the largest diameter pipe must be closest
+to the cylinder and sizes are to decrease as they reach the nozzle. So piping always runs from
+large to smaller diameter.
+- Elbow(s) or swivel adaptor uses at the nozzle for aiming, DO NOT count toward the total elbows
+allowed per system or the number of elbows between two (2) nozzles.
