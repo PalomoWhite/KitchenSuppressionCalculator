@@ -1,4 +1,4 @@
-# Technical Inventory — Buckeye Kitchen Mister (BFR-TM, Rev. 6, 01/02/2020)
+# Technical Inventory — Buckeye Kitchen Mister (BFR-TM, Rev. 6, 2020-02-01)
 
 ## 0. Manual Edition
 - Kitchen Mister Restaurant Cooking Area Fire Suppression System / REV. 6 / February 1, 2020
@@ -45,6 +45,7 @@
 | Charbroiler, Radiant                          | 36 in * 24 in                             | N-1HP  | BLUE   |
 | Charbroiler, Lava Rock                        | 24 in * 24 in                             | N-2HP  | GREEN  |
 | Charbroiler, Upright (Salamander)             | 36 in * 24 in                             | N-1LP  | RED    |
+
 - \* Coverages can be used with a back-shelf or another type of obstruction,
 as long as the discharge pattern is not affected.
 - \*\* Cover must not interfere with nozzle discharge.
@@ -69,7 +70,11 @@ in accordance with the nozzles installed in the system. (pag. 2-1)
 - The total system volume is determined by the diameter and total length of installed piping;
 the tank must be selected based on the total piping volume. (pag. 3-13)
 - When you have a system that exceeds 20 flow points, combine and supplement with various tanks that
-have sufficient capacity to meet the requirement. (Approved by the brand and distributor)
+have sufficient capacity to meet the requirement.
+- For the convenience of the installer and to suit project conditions,
+consider modularizing the systems using 5- and 10-flow tanks, rather than opting for a 15- or 20-flow tank.
+- The tanks in a system can be connected to the same piping or
+positioned separately to address the different risks within the system.
 
 ## 4. Piping limitations (Tables pag.3-13)
 - Piping Volume Chart
@@ -87,12 +92,12 @@ have sufficient capacity to meet the requirement. (Approved by the brand and dis
 | BFR-10        | 10                    | 2500                       | 2000                                                   |
 | BFR-15        | 15                    | 2800*                      | 2500                                                   |
 | BFR-20        | 20                    | 2800*                      | 2500                                                   |
-- \* Total Volume of 3/8" (17.1 mm OD) piping allowed on the BFR-15 or BFR-20 is 2500.
+- \* Total Volume of 3/8" (17.1 mm OD) piping allowed on the BFR-15 or BFR-20 is 2500 mL.
 
 
-## 4.2 Minimum Piping Requirements (Pag. 3-13)
+## 4.1 Minimum Piping Requirements (Pag. 3-13)
 
-- Note: This ONLY apply when protecting a wok, deep fat fryer or range.
+- Note: This ONLY applies when protecting a wok, deep fat fryer or range.
 
 1. Minimum number of elbows before the closest nozzle protecting a fryer, range or wok shall be five(5).
 2. The minimum piping volume before the closest nozzle protecting a fryer, range or wok shall not be less than 360 ml.
@@ -111,13 +116,16 @@ have sufficient capacity to meet the requirement. (Approved by the brand and dis
 | BFR-5                | 20 elbows |
 | BFR-10/15/20         | 25 elbows |
 
-- The maximum number of elbows between any two nozzles is five (5).
-- The maximum vertical rise of the supply line is 10 feet(3 m),
-this is the maximum elevation difference between tank and the highest
-or lowest nozzle point in the piping system.
-- The maximum vertical rise of any nozzle above the supply line is 2 feet(0.6m).
-- When different pipe size is used in the same system, the largest diameter pipe must be closest
+1. The maximum number of elbows between any two nozzles is five (5).
+2. The maximum vertical rise of the supply line is 10 feet(3 m),
+this is the maximum elevation difference between tank outlet and the highest
+nozzle or tank outlet and the highest or lowest point in the piping system.
+3. The maximum vertical rise of any nozzle above the supply line is 2 feet(0.6m).
+4. No traps allowed in the piping system.
+- Note: A "trap" is defined as a section of pipe that would allow liquid to accumulate, such as,
+either a low point in the piping layout or piping that extends past the last discharge point.
+5. When different pipe size is used in the same system, the largest diameter pipe must be closest
 to the cylinder and sizes are to decrease as they reach the nozzle. So piping always runs from
 large to smaller diameter.
-- Elbow(s) or swivel adaptors used at the nozzle for aiming, DO NOT count toward the total elbows
+6. Elbow(s) or swivel adaptors used at the nozzle for aiming, DO NOT count toward the total elbows
 allowed per system or the number of elbows between two (2) nozzles.
