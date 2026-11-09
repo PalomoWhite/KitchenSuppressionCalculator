@@ -17,6 +17,7 @@ import time
 from pathlib import Path
 
 from . import data as D
+from . import systems
 
 APP_DIR_NAME = 'AnsulFlowCalculator'
 
@@ -78,6 +79,10 @@ class Store:
 
         migrated = False
         for p in self.data['projects']:
+            # Proyectos anteriores a la versión con varias marcas: eran ANSUL.
+            if not systems.is_valid(p.get('system')):
+                p['system'] = systems.DEFAULT_SYSTEM
+                migrated = True
             for k in p.get('kitchens', []):
                 for item in k.get('equipment', []):
                     mapped = D.LEGACY_CATEGORY_MAP.get(item.get('category'))
@@ -133,8 +138,11 @@ class Store:
         k = self.get_kitchen(pid, kid)
         return k and next((e for e in k['equipment'] if e['id'] == eid), None)
 
-    def add_project(self, name):
-        p = {'id': uid(), 'name': name or 'Proyecto sin nombre',
+    def add_project(self, name, system=None):
+        system = system or systems.DEFAULT_SYSTEM
+        if not systems.is_valid(system):
+            raise ValueError(f'Marca desconocida: {system}')
+        p = {'id': uid(), 'name': name or 'Proyecto sin nombre', 'system': system,
              'createdAt': int(time.time() * 1000), 'kitchens': []}
         self.data['projects'].insert(0, p)
         self.save()
@@ -145,6 +153,27 @@ class Store:
         if p:
             p['name'] = name
             self.save()
+
+    @staticmethod
+    def project_has_equipment(p):
+        return any(k.get('equipment') for k in (p or {}).get('kitchens', []))
+
+    def set_project_system(self, pid, system):
+        """Cambia la marca del proyecto. Solo se permite si todavía no tiene
+        riesgos (no hay proyectos mixtos — ver docs/DISEÑO.md)."""
+        p = self.get_project(pid)
+        if not p:
+            return None
+        if not systems.is_valid(system):
+            raise ValueError(f'Marca desconocida: {system}')
+        if p.get('system') != system and self.project_has_equipment(p):
+            raise ValueError('No se puede cambiar la marca de un proyecto que ya tiene riesgos.')
+        p['system'] = system
+        for k in p.get('kitchens', []):
+            k.pop('tankOverride', None)
+            k.pop('cylinderChoice', None)
+        self.save()
+        return p
 
     def delete_project(self, pid):
         self.data['projects'] = [p for p in self.data['projects'] if p['id'] != pid]
@@ -188,6 +217,8 @@ class Store:
         }
         if k.get('tankOverride'):
             new_kitchen['tankOverride'] = dict(k['tankOverride'])
+        if k.get('cylinderChoice'):
+            new_kitchen['cylinderChoice'] = list(k['cylinderChoice'])
         p['kitchens'].append(new_kitchen)
         for item in k.get('equipment', []):
             copy = {k2: v for k2, v in item.items() if k2 not in ('id', 'createdAt')}
@@ -212,6 +243,17 @@ class Store:
                 k.pop('tankOverride', None)
             else:
                 k['tankOverride'] = override
+            self.save()
+
+    def set_kitchen_cylinder_choice(self, pid, kid, cylinders):
+        """Buckeye: combinación de cilindros elegida, p. ej. [10, 10, 5]
+        (None = usar la primera opción de la lista)."""
+        k = self.get_kitchen(pid, kid)
+        if k is not None:
+            if cylinders:
+                k['cylinderChoice'] = sorted((int(c) for c in cylinders), reverse=True)
+            else:
+                k.pop('cylinderChoice', None)
             self.save()
 
     def add_equipment(self, pid, kid, item):
@@ -261,6 +303,9 @@ class Store:
         if not isinstance(incoming, dict) or 'projects' not in incoming:
             raise ValueError('El archivo no tiene el formato esperado de un respaldo de Ansul Flow Calculator.')
         self.data = incoming
+        for p in self.data['projects']:
+            if not systems.is_valid(p.get('system')):
+                p['system'] = systems.DEFAULT_SYSTEM
         if 'customCatalog' not in self.data:
             self.data['customCatalog'] = []
         if 'lastResponsible' not in self.data:
