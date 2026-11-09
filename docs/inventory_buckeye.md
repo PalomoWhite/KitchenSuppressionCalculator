@@ -52,6 +52,26 @@ as long as the discharge pattern is not affected.
 - \*\*\* For the High Proximity Back-shelf coverage the shelf shall not exceed more than 11"(28cm) over the back edge of the
 burners and be a minimum of 16"(41cm) from the top of the appliance.
 
+## 2.1 Appliances Requiring Multiple Nozzles (Module Protection) (pag. 3-3 and 3-11)
+
+- Appliances that exceed the coverage of a single nozzle can be protected with multiple nozzles.
+The hazard area must be divided into equal sized modules, with each module not exceeding the
+maximum coverage allowed for a single nozzle. (pag. 3-11)
+- Each zone is protected as an individual appliance with respect to nozzle placement and aiming. (pag. 3-3)
+- Hazard area is NOT the overall size of the appliance, but the actual size of the portion used for cooking. (pag. 3-3)
+- CAUTION: the maximum size fryer that can be modularized is 864 sq. in. (5,574 sq. cm). (pag. 3-7 and 3-11)
+- Example: Radiant charbroiler 60" x 24" protected as two 30" x 24" modules (Figure 3-24, pag. 3-11).
+- Plenums longer than 12 ft: divide into 12 ft sections, one N-1HP per section; recommended equal
+sized zones (e.g. 16 ft -> two 8 ft zones). (pag. 3-3)
+- Ducts larger than 150" perimeter: more than one N-2W; the cross-sectional area is divided into equal
+symmetrical areas, no area can exceed the single nozzle coverage. (pag. 3-2)
+- Hoods with multiple risers (upper / lower plenums): each riser is protected as an individual duct. (pag. 3-2)
+- Electrostatic precipitators: duct protection above and below the precipitator, using standard duct nozzles. (pag. 3-2)
+
+### Coverage only in the detail pages (not in the summary table pag. 3-12)
+| APPLICATION                          | COVERAGE (in) | NOZZLE | Color | Nozzle Ht. (in) | Page |
+|--------------------------------------|---------------|--------|-------|-----------------|------|
+| Charbroiler, Class "A" (Solid Fuel)  | 24 in * 24 in | N-2HP  | GREEN | 24 - 40 (fuel depth 6 in max.) | 3-11 |
 
 ## 3. Cylinder Sizes
 
@@ -73,9 +93,8 @@ the tank must be selected based on the total piping volume. (pag. 3-13)
 have sufficient capacity to meet the requirement.
 - For the convenience of the installer and to suit project conditions,
 consider modularizing the systems using 5- and 10-flow tanks, rather than opting for a 15- or 20-flow tank.
-- The tanks in a system can be connected to the same piping or
-positioned separately to address the different risks within the system.
-
+- Tanks of equal capacity can be connected to the same piping 
+or positioned separately to address different risks within the system.
 ## 4. Piping limitations (Tables pag.3-13)
 - Piping Volume Chart
 
@@ -100,7 +119,7 @@ positioned separately to address the different risks within the system.
 - Note: This ONLY applies when protecting a wok, deep fat fryer or range.
 
 1. Minimum number of elbows before the closest nozzle protecting a fryer, range or wok shall be five(5).
-2. The minimum piping volume before the closest nozzle protecting a fryer, range or wok shall not be less than 360 ml.
+2. The minimum piping volume before the closest nozzle protecting a fryer, range or wok shall not be less than 360 mL.
 3. The total system pipe volume shall not be less than 660 mL for all cylinder sizes.
 4. A system shall have minimum of three (3) flow points.
 
@@ -122,7 +141,7 @@ this is the maximum elevation difference between tank outlet and the highest
 nozzle or tank outlet and the highest or lowest point in the piping system.
 3. The maximum vertical rise of any nozzle above the supply line is 2 feet(0.6m).
 4. No traps allowed in the piping system.
-- Note: A "trap" is defined as a section of pipe that would allow liquid to accumulate, such as,
+   - Note: A "trap" is defined as a section of pipe that would allow liquid to accumulate, such as,
 either a low point in the piping layout or piping that extends past the last discharge point.
 5. When different pipe size is used in the same system, the largest diameter pipe must be closest
 to the cylinder and sizes are to decrease as they reach the nozzle. So piping always runs from
