@@ -1,7 +1,0 @@
-# Dependencias para PROBAR la app Android en escritorio (python android/main.py)
-# y para que Buildozer sepa qué empaquetar (ver buildozer.spec, sección
-# "requirements", que es la que de verdad usa la compilación del .apk).
-kivy==2.3.1
-kivymd==2.0.0
-plyer>=2.1
-reportlab>=4.0

@@ -14,8 +14,3 @@ __pycache__/
 #Carpetas de compilación de Pyinstaller
 /build/
 /dist/
-
-#Carpetas de compilación de andriod
-android/.buildozer
-android/bin
-

@@ -132,35 +132,6 @@ Python, ver la guía paso a paso en
 (incluye una opción para compilarlo en la nube con GitHub Actions si no
 tienes una PC con Windows a la mano).
 
-## Versión Android
-
-Existe una versión para Android en `android/`, escrita con Kivy/KivyMD.
-Reutiliza sin cambios el motor de cálculo y la persistencia de la
-versión de escritorio (`ansul/engine.py`, `category_defs.py`, `data.py`,
-`store.py`, `report.py`) — solo la interfaz está reconstruida con
-widgets de Kivy, incluyendo un **formulario dinámico genérico**
-(`android/ui/dynamic_form.py`) que lee las mismas especificaciones
-declarativas de `category_defs.py` que usa la versión de escritorio, así
-que cubre las 17 categorías de riesgo automáticamente, sin una pantalla
-distinta por categoría. Cubre proyectos, sistemas, riesgos (con el
-cálculo completo de las 17 categorías, incluida la selección de
-boquilla cuando hay varias opciones), resumen de tanques/flow number por
-sistema, y generación + compartir de reportes PDF. El buscador de
-catálogo de 65 modelos y el diagrama en vivo del área protegida, por
-ahora, siguen siendo exclusivos de la versión de escritorio.
-
-Para compilar el `.apk`, ver la guía paso a paso en
-[`packaging/android/instalador_android.md`](packaging/android/instalador_android.md)
-(incluye una opción para compilarlo en la nube con GitHub Actions si no
-tienes una máquina Linux a la mano — Buildozer, la herramienta que
-empaqueta Python para Android, solo compila en Linux). Para probar la
-app en escritorio antes de compilarla:
-
-```bash
-pip install -r android/requirements.txt
-python android/main.py
-```
-
 ## Estructura del proyecto
 
 ```
@@ -182,24 +153,15 @@ ansul/
     diagram_widget.py         Diagrama en vivo del área protegida del equipo
     style.py                  Hoja de estilos Qt (QSS) con la paleta ANSUL
     form_widgets.py           Constructor de formularios dinámicos
-android/                      Versión Android (Kivy/KivyMD) — reutiliza ansul/
-                               tal cual; main.py es el punto de entrada, ui/
-                               trae las pantallas y el formulario dinámico
 tests/
   test_engine.py              Pruebas de regresión del motor de cálculo
   _smoke_phase4.py            Prueba de humo de interfaz de escritorio
                                (offscreen, no es parte de la suite automática)
-  _smoke_android.py           Prueba de humo de la interfaz Android (requiere
-                               Kivy/KivyMD instalados; tampoco es automática)
 packaging/windows/            Archivos para generar el instalador de Windows
                                (spec de PyInstaller, script .bat, script de
                                Inno Setup, guía paso a paso)
-packaging/android/            Archivos para generar el .apk de Android
-                               (buildozer.spec vive en android/, script de
-                               build, guía paso a paso)
-.github/workflows/            Workflows de GitHub Actions para compilar el
-                               instalador de Windows y el .apk de Android
-                               en la nube
+.github/workflows/            Workflow de GitHub Actions para compilar el
+                               instalador de Windows en la nube
 ```
 
 ## Pruebas
