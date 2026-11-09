@@ -14,22 +14,20 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSplitter, QTreeWidget,
                                 QTreeWidgetItem, QStackedWidget, QLabel, QPushButton, QTableWidget,
                                 QTableWidgetItem, QHeaderView, QMessageBox, QInputDialog, QLineEdit,
-                                QFormLayout, QGroupBox, QFileDialog, QMenu, QAbstractItemView, QCheckBox)
+                                QFormLayout, QGroupBox, QFileDialog, QMenu, QAbstractItemView, QCheckBox,
+                                QComboBox)
 
-from .. import data as D
 from .. import engine as E
 from .. import report
+from .. import systems
 from ..store import Store, today_iso
-from ..category_defs import category_display_label, dimensions_display, depth_display
 from .equipment_dialog import EquipmentDialog
 from .catalog_dialog import CatalogManagerDialog
 from .reference_dialog import ReferenceDialog
 from .unit_converter_dialog import UnitConverterDialog
 
-APP_TITLE = 'Ansul Flow Calculator — Sistema ANSUL(R) R-102'
-DISCLAIMER_SHORT = ('Esta herramienta es una ayuda de diseño preliminar basada en el manual ANSUL(R) R-102. '
-                     'El diseño final debe ser verificado y sellado por un diseñador certificado ANSUL R-102, '
-                     'conforme a NFPA 17A y los códigos locales aplicables.')
+APP_TITLE = 'Ansul Flow Calculator — ANSUL(R) R-102 / Buckeye Kitchen Mister'
+DISCLAIMER_SHORT = systems.get(None).disclaimer_short
 
 ROLE_PROJECT = 'project'
 ROLE_KITCHEN = 'kitchen'
@@ -69,14 +67,17 @@ class MainWindow(QMainWindow):
         m_file.addAction(act_quit)
 
         m_catalog = menubar.addMenu('&Catálogo')
-        act_manage_catalog = QAction('Administrar mi catálogo…', self)
+        act_manage_catalog = QAction('Administrar mi catálogo (ANSUL)…', self)
         act_manage_catalog.triggered.connect(self._open_catalog_manager)
         m_catalog.addAction(act_manage_catalog)
 
         m_ref = menubar.addMenu('&Referencia')
-        act_piping = QAction('Requisitos de tubería / boquillas…', self)
+        act_piping = QAction('ANSUL R-102: tubería / boquillas…', self)
         act_piping.triggered.connect(self._open_reference)
         m_ref.addAction(act_piping)
+        act_buckeye = QAction('Buckeye Kitchen Mister: boquillas, cilindros, coberturas y tubería…', self)
+        act_buckeye.triggered.connect(self._open_buckeye_reference)
+        m_ref.addAction(act_buckeye)
 
         m_tools = menubar.addMenu('&Herramientas')
         act_units = QAction('Convertidor pies ↔ metros…', self)
@@ -137,10 +138,10 @@ class MainWindow(QMainWindow):
         self.stack.addWidget(self.page_kitchen)
         self.stack.setCurrentWidget(self.page_empty)
 
-        footer = QLabel(DISCLAIMER_SHORT)
-        footer.setWordWrap(True)
-        footer.setStyleSheet('color:#777; font-size:11px; padding:6px 10px;')
-        outer.addWidget(footer)
+        self.footer = QLabel(DISCLAIMER_SHORT)
+        self.footer.setWordWrap(True)
+        self.footer.setStyleSheet('color:#777; font-size:11px; padding:6px 10px;')
+        outer.addWidget(self.footer)
 
     def _build_empty_page(self):
         w = QWidget()
@@ -172,6 +173,16 @@ class MainWindow(QMainWindow):
         header_row.addWidget(btn_rename)
         header_row.addWidget(btn_delete)
         layout.addLayout(header_row)
+
+        brand_row = QHBoxLayout()
+        self.project_brand_label = QLabel()
+        self.project_brand_label.setStyleSheet('font-weight:bold; color:#0554a3;')
+        brand_row.addWidget(self.project_brand_label)
+        self.btn_change_brand = QPushButton('Cambiar marca…')
+        self.btn_change_brand.clicked.connect(self._change_current_project_system)
+        brand_row.addWidget(self.btn_change_brand)
+        brand_row.addStretch()
+        layout.addLayout(brand_row)
 
         quote_row = QHBoxLayout()
         quote_row.addWidget(QLabel('No. de cotización:'))
@@ -269,7 +280,18 @@ class MainWindow(QMainWindow):
         eq_btn_row.addWidget(btn_del_eq)
         layout.addLayout(eq_btn_row, 0)
 
+        # Buckeye: selector de combinación de cilindros (todas las opciones mínimas).
+        self.cylinder_box = QGroupBox('Cilindros Buckeye — combinaciones posibles (elija una)')
+        cyl_layout = QHBoxLayout(self.cylinder_box)
+        self.cylinder_combo = QComboBox()
+        self.cylinder_combo.setMinimumWidth(380)
+        self.cylinder_combo.currentIndexChanged.connect(self._on_cylinder_choice_changed)
+        cyl_layout.addWidget(self.cylinder_combo)
+        cyl_layout.addStretch()
+        layout.addWidget(self.cylinder_box, 0)
+
         tank_box = QGroupBox('Galonaje / selección de tanques')
+        self.tank_box = tank_box
         tank_layout = QHBoxLayout(tank_box)
         self.tank_override_check = QCheckBox('Elegir tanques manualmente (en vez de automático)')
         self.tank_override_check.toggled.connect(self._on_tank_override_toggled)
@@ -328,7 +350,7 @@ class MainWindow(QMainWindow):
         self.tree.clear()
         select_item = None
         for p in self.store.data['projects']:
-            p_item = QTreeWidgetItem([p['name']])
+            p_item = QTreeWidgetItem([f"{p['name']}  [{systems.for_project(p).short}]"])
             p_item.setData(0, Qt.UserRole, (ROLE_PROJECT, p['id'], None))
             self.tree.addTopLevelItem(p_item)
             for k in p.get('kitchens', []):
@@ -385,10 +407,42 @@ class MainWindow(QMainWindow):
     # ------------------------------------------------------------------
     # Proyectos: CRUD
     # ------------------------------------------------------------------
+    def _ask_system(self, title, current=None):
+        """Pregunta la marca del proyecto. Regresa la clave o None si se canceló."""
+        labels = [label for _key, label in systems.CHOICES]
+        keys = [key for key, _label in systems.CHOICES]
+        idx = keys.index(current) if current in keys else 0
+        label, ok = QInputDialog.getItem(self, title, 'Marca del sistema de supresión:\n'
+                                         '(todos los sistemas del proyecto serán de esta marca)',
+                                         labels, idx, False)
+        if not ok:
+            return None
+        return keys[labels.index(label)]
+
     def _add_project(self):
+        system = self._ask_system('Nuevo proyecto')
+        if not system:
+            return
         name, ok = QInputDialog.getText(self, 'Nuevo proyecto', 'Nombre del proyecto:')
         if ok and name.strip():
-            p = self.store.add_project(name.strip())
+            p = self.store.add_project(name.strip(), system)
+            self._refresh_tree(select_kind=ROLE_PROJECT, select_pid=p['id'])
+
+    def _change_current_project_system(self):
+        sel = self._current_selection()
+        if not sel or sel[0] != ROLE_PROJECT:
+            return
+        p = self.store.get_project(sel[1])
+        if not p:
+            return
+        if self.store.project_has_equipment(p):
+            QMessageBox.information(self, 'Cambiar marca',
+                                    'Este proyecto ya tiene riesgos capturados: no se puede cambiar la marca '
+                                    '(no se permiten proyectos mixtos). Cree un proyecto nuevo con la otra marca.')
+            return
+        system = self._ask_system('Cambiar marca', p.get('system'))
+        if system and system != p.get('system'):
+            self.store.set_project_system(p['id'], system)
             self._refresh_tree(select_kind=ROLE_PROJECT, select_pid=p['id'])
 
     def _rename_project(self, pid):
@@ -492,16 +546,25 @@ class MainWindow(QMainWindow):
         if not p:
             self.stack.setCurrentWidget(self.page_empty)
             return
+        system = systems.for_project(p)
         self.stack.setCurrentWidget(self.page_project)
+        self.footer.setText(system.disclaimer_short)
         self.project_title_label.setText(p['name'])
+        self.project_brand_label.setText(f'Marca: {system.label}')
+        has_eq = self.store.project_has_equipment(p)
+        self.btn_change_brand.setEnabled(not has_eq)
+        self.btn_change_brand.setToolTip('Solo se puede cambiar mientras el proyecto no tenga riesgos.'
+                                         if has_eq else 'Cambiar la marca de este proyecto.')
         self.project_quote_edit.setText(p.get('quoteNumber', ''))
+        self.kitchens_table.setHorizontalHeaderLabels(
+            ['Sistema', 'Riesgos', system.flow_label, 'Cilindros' if system.supports_cylinder_choice else 'Tanques'])
 
         has_equipment = any(k.get('equipment') for k in p.get('kitchens', []))
         self.project_pdf_btn.setEnabled(has_equipment)
 
         self.kitchens_table.setRowCount(0)
         for k in p.get('kitchens', []):
-            s = E.kitchen_summary(k)
+            s = system.kitchen_summary(k)
             row = self.kitchens_table.rowCount()
             self.kitchens_table.insertRow(row)
             name_item = QTableWidgetItem(k['name'])
@@ -509,16 +572,13 @@ class MainWindow(QMainWindow):
             self.kitchens_table.setItem(row, 0, name_item)
             self.kitchens_table.setItem(row, 1, QTableWidgetItem(str(s['itemCount'])))
             self.kitchens_table.setItem(row, 2, QTableWidgetItem(E.fmt_num(s['totalFlow'])))
-            tank_txt = f"{s['tanks']['tankCount']} ({E.fmt_num(s['tanks']['totalGallons'])} gal)" if s['tanks']['tankCount'] else '—'
-            self.kitchens_table.setItem(row, 3, QTableWidgetItem(tank_txt))
+            self.kitchens_table.setItem(row, 3, QTableWidgetItem(system.containers_short(s)))
 
-        ps = E.project_summary(p)
-        self.project_summary_label.setText(
-            f"<b>Sistemas:</b> {len(p['kitchens'])} &nbsp;&nbsp; "
-            f"<b>Capacidad total de flujo (flow number):</b> {E.fmt_num(ps['totalFlow'])} &nbsp;&nbsp; "
-            f"<b>Tanques totales a instalar:</b> {ps['totalTanks']} &nbsp;&nbsp; "
-            f"<b>Galonaje total de agente:</b> {E.fmt_num(ps['totalGallons'])} gal")
-        self._fill_nozzle_table(self.project_nozzle_table, ps['nozzleTotals'])
+        ps = system.project_summary(p)
+        parts = [f"<b>Sistemas:</b> {len(p['kitchens'])}"]
+        parts += [f"<b>{label.strip()}:</b> {value}" for label, value in system.project_rows(ps)]
+        self.project_summary_label.setText(' &nbsp;&nbsp; '.join(parts))
+        self._fill_nozzle_table(self.project_nozzle_table, ps['nozzleTotals'], system)
         self.project_responsible_edit.setText(self.store.data.get('lastResponsible', ''))
 
     # ------------------------------------------------------------------
@@ -529,9 +589,16 @@ class MainWindow(QMainWindow):
         if not k:
             self.stack.setCurrentWidget(self.page_empty)
             return
+        system = systems.for_project(self.store.get_project(pid))
         self.stack.setCurrentWidget(self.page_kitchen)
-        self.kitchen_title_label.setText(k['name'])
+        self.footer.setText(system.disclaimer_short)
+        self.kitchen_title_label.setText(f"{k['name']}  —  {system.label}")
         self.kitchen_pdf_btn.setEnabled(bool(k.get('equipment')))
+        self.tank_box.setVisible(system.supports_tank_override)
+        self.cylinder_box.setVisible(system.supports_cylinder_choice)
+        self.equipment_table.setHorizontalHeaderLabels(
+            ['Tipo', 'Marca / Modelo', 'Largo x Ancho', 'Profundidad', 'Boquillas',
+             'Flow pts' if system.supports_cylinder_choice else 'Flow', 'Altura'])
 
         override = k.get('tankOverride') or {}
         self.tank_override_check.blockSignals(True)
@@ -552,19 +619,35 @@ class MainWindow(QMainWindow):
             r = item.get('result') or {}
             row = self.equipment_table.rowCount()
             self.equipment_table.insertRow(row)
-            type_item = QTableWidgetItem(category_display_label(item))
+            type_item = QTableWidgetItem(system.category_display_label(item))
             type_item.setData(Qt.UserRole, item['id'])
             self.equipment_table.setItem(row, 0, type_item)
             brand_model = ' '.join(x for x in [item.get('brand'), item.get('model')] if x) or '—'
             self.equipment_table.setItem(row, 1, QTableWidgetItem(brand_model))
-            self.equipment_table.setItem(row, 2, QTableWidgetItem(dimensions_display(item) or '—'))
-            self.equipment_table.setItem(row, 3, QTableWidgetItem(depth_display(item) or '—'))
+            self.equipment_table.setItem(row, 2, QTableWidgetItem(system.dimensions_display(item) or '—'))
+            self.equipment_table.setItem(row, 3, QTableWidgetItem(system.depth_display(item) or '—'))
             nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in (r.get('nozzles') or [])) or '—'
             self.equipment_table.setItem(row, 4, QTableWidgetItem(nozz_txt))
             self.equipment_table.setItem(row, 5, QTableWidgetItem(E.fmt_num(r.get('flowNumber'))))
             self.equipment_table.setItem(row, 6, QTableWidgetItem(r.get('heightRange', '—')))
 
-        s = E.kitchen_summary(k)
+        s = system.kitchen_summary(k)
+        if system.supports_tank_override:
+            self._show_ansul_tank_summary(s)
+        else:
+            self._fill_cylinder_combo(system, s)
+            self.kitchen_summary_label.setText('<br>'.join(f'<b>{label}:</b> {value}'
+                                                           for label, value in system.summary_rows(s)))
+        notes = system.summary_notes(s)
+        if notes:
+            self.kitchen_note_label.setText('<br><br>'.join(notes))
+            self.kitchen_note_label.setVisible(True)
+        else:
+            self.kitchen_note_label.setVisible(False)
+        self._fill_nozzle_table(self.kitchen_nozzle_table, s['nozzleTotals'], system)
+        self.kitchen_responsible_edit.setText(self.store.data.get('lastResponsible', ''))
+
+    def _show_ansul_tank_summary(self, s):
         tanks = s['tanks']
         tank_lines = []
         if tanks['tankCount']:
@@ -579,22 +662,41 @@ class MainWindow(QMainWindow):
             f"<b>Galonaje total de agente:</b> {E.fmt_num(tanks.get('totalGallons'))} gal<br>"
             f"<b>Cartucho — opción N2:</b> {tanks.get('n2') or '—'}<br>"
             f"<b>Cartucho — opción CO2 (alternativa, no ambos):</b> {tanks.get('co2') or '—'}")
-        if tanks.get('note'):
-            self.kitchen_note_label.setText(tanks['note'])
-            self.kitchen_note_label.setVisible(True)
-        else:
-            self.kitchen_note_label.setVisible(False)
-        self._fill_nozzle_table(self.kitchen_nozzle_table, s['nozzleTotals'])
-        self.kitchen_responsible_edit.setText(self.store.data.get('lastResponsible', ''))
 
-    def _fill_nozzle_table(self, table, nozzle_totals):
+    def _fill_cylinder_combo(self, system, s):
+        options = system.cylinder_options(s)
+        chosen = (s.get('chosen') or {}).get('cylinders')
+        self.cylinder_combo.blockSignals(True)
+        self.cylinder_combo.clear()
+        for label, cyls in options:
+            self.cylinder_combo.addItem(label, cyls)
+        if not options:
+            self.cylinder_combo.addItem('Sin riesgos calculados todavía', None)
+        idx = next((i for i, (_l, c) in enumerate(options) if c == chosen), 0)
+        self.cylinder_combo.setCurrentIndex(idx)
+        self.cylinder_combo.setEnabled(bool(options))
+        self.cylinder_combo.blockSignals(False)
+
+    def _on_cylinder_choice_changed(self, idx):
+        pid, kid = self._current_kitchen_ids()
+        if not pid or idx < 0:
+            return
+        cyls = self.cylinder_combo.itemData(idx)
+        if cyls:
+            self.store.set_kitchen_cylinder_choice(pid, kid, cyls)
+            self._show_kitchen(pid, kid)
+
+    def _fill_nozzle_table(self, table, nozzle_totals, system=None):
+        system = system or systems.get(None)
+        cols = system.nozzle_columns()
         table.setRowCount(0)
+        table.setColumnCount(len(cols))
+        table.setHorizontalHeaderLabels(cols)
         for code in sorted(nozzle_totals.keys()):
             row = table.rowCount()
             table.insertRow(row)
-            table.setItem(row, 0, QTableWidgetItem(code))
-            table.setItem(row, 1, QTableWidgetItem(D.NOZZLES.get(code, {}).get('partNo', '—')))
-            table.setItem(row, 2, QTableWidgetItem(str(nozzle_totals[code])))
+            for c, value in enumerate(system.nozzle_row(code, nozzle_totals[code])):
+                table.setItem(row, c, QTableWidgetItem(value))
 
     # ------------------------------------------------------------------
     # Riesgos (equipos): CRUD
@@ -609,7 +711,8 @@ class MainWindow(QMainWindow):
         pid, kid = self._current_kitchen_ids()
         if not pid:
             return
-        dlg = EquipmentDialog(self.store, parent=self)
+        system = systems.for_project(self.store.get_project(pid))
+        dlg = EquipmentDialog(self.store, parent=self, system=system)
         if dlg.exec() == EquipmentDialog.Accepted and dlg.result_item:
             self.store.add_equipment(pid, kid, dlg.result_item)
             self._show_kitchen(pid, kid)
@@ -626,7 +729,8 @@ class MainWindow(QMainWindow):
         if not pid or not eid:
             return
         item = self.store.get_equipment(pid, kid, eid)
-        dlg = EquipmentDialog(self.store, existing_item=item, parent=self)
+        system = systems.for_project(self.store.get_project(pid))
+        dlg = EquipmentDialog(self.store, existing_item=item, parent=self, system=system)
         if dlg.exec() == EquipmentDialog.Accepted and dlg.result_item:
             self.store.update_equipment(pid, kid, eid, dlg.result_item)
             self._show_kitchen(pid, kid)
@@ -781,6 +885,11 @@ class MainWindow(QMainWindow):
         dlg = ReferenceDialog(parent=self)
         dlg.exec()
 
+    def _open_buckeye_reference(self):
+        from .buckeye_reference_dialog import BuckeyeReferenceDialog
+        dlg = BuckeyeReferenceDialog(parent=self)
+        dlg.exec()
+
     def _open_unit_converter(self):
         dlg = UnitConverterDialog(parent=self)
         dlg.exec()
@@ -788,9 +897,12 @@ class MainWindow(QMainWindow):
     def _show_about(self):
         QMessageBox.information(self, 'Acerca de Ansul Flow Calculator',
                                  'Ansul Flow Calculator\n\n'
-                                 'Calculadora de apoyo para el diseño preliminar de sistemas de supresión '
-                                 'ANSUL(R) R-102 para cocinas comerciales, basada en el manual ANSUL(R) R-102 '
-                                 '(Part No. 418087) y la Hoja Resumen F-2015158-01_LAS.\n\n' + DISCLAIMER_SHORT)
+                                 'Calculadora de apoyo para el diseño preliminar de sistemas de supresión para '
+                                 'cocinas comerciales:\n'
+                                 '• ANSUL(R) R-102 — manual R-102 (Part No. 418087) y Hoja Resumen F-2015158-01_LAS.\n'
+                                 '• Buckeye Kitchen Mister — manual técnico BFR-TM Rev. 6 (2020-02-01).\n\n'
+                                 'La marca se elige al crear cada proyecto.\n\n'
+                                 + DISCLAIMER_SHORT + '\n\n' + systems.get('buckeye_bfr').disclaimer_short)
 
     # ------------------------------------------------------------------
     def closeEvent(self, event):

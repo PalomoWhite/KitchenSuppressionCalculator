@@ -67,8 +67,18 @@ class EquipmentDiagramWidget(QWidget):
         self._dims = None
         self._unit = 'in'
 
-    def update_diagram(self, category, values, catalog_ref=None):
+    def update_diagram(self, category, values, catalog_ref=None, system=None):
         self._mode, self._dims = None, None
+
+        # Marcas con su propio diagrama (Buckeye): la marca dice qué dibujar.
+        spec = system.diagram_spec(category, values) if system is not None else None
+        if spec is not None:
+            if spec[0] == 'rect':
+                self._mode, self._dims, self._unit = 'rect', (spec[1], spec[2]), spec[3]
+            elif spec[0] == 'circle':
+                self._mode, self._dims, self._unit = 'circle', (spec[1],), spec[2]
+            self.update()
+            return
 
         # Caso especial: el equipo viene de catálogo con superficie fija.
         if catalog_ref and _f(catalog_ref.get('surfaceW')) and _f(catalog_ref.get('surfaceD')):

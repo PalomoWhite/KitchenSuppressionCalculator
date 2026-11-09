@@ -13,9 +13,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak)
 
-from . import data as D
 from . import engine as E
-from .category_defs import category_display_label
+from . import systems
 from .store import today_iso
 
 MARGIN = 0.64 * inch  # ~46pt, igual que PDF_MARGIN en el HTML
@@ -77,43 +76,35 @@ def _table(rows, col_widths, header=None, num_cols=None):
     return t
 
 
-def _nozzle_breakdown_table(nozzle_totals, total_width):
+def _nozzle_breakdown_table(system, nozzle_totals, total_width):
     codes = sorted(nozzle_totals.keys())
-    header = ['Boquilla (modelo)', 'No. de parte', 'Cantidad']
+    header = ['Boquilla (modelo)'] + list(system.nozzle_columns())[1:]
+    ncols = len(header)
     if not codes:
-        rows = [['Sin riesgos calculados', '—', '—']]
+        rows = [['Sin riesgos calculados'] + ['—'] * (ncols - 1)]
     else:
-        rows = [[c, D.NOZZLES[c]['partNo'] if c in D.NOZZLES else '—', str(nozzle_totals[c])] for c in codes]
-    widths = [total_width * 1.6 / 3.9, total_width * 1.3 / 3.9, total_width * 1.0 / 3.9]
-    return _table(rows, widths, header=header, num_cols={2})
+        rows = [system.nozzle_row(c, nozzle_totals[c]) for c in codes]
+    weights = [1.6, 1.3, 1.0] if ncols == 3 else [1.3, 1.0, 1.2, 0.8]
+    widths = [total_width * w / sum(weights) for w in weights]
+    return _table(rows, widths, header=header, num_cols={ncols - 1})
 
 
-def _summary_rows(summary):
-    rows = [['Capacidad total de flujo del sistema (flow number)', E.fmt_num(summary['totalFlow'])]]
-    tanks = summary['tanks']
-    if tanks.get('manual'):
-        rows.append(['Selección de tanques', 'Manual (elegida por el usuario)'])
-    if tanks.get('tankCount'):
-        counts = E.tank_counts(tanks['tanks'])
-        for g in sorted(counts.keys(), reverse=True):
-            rows.append([f'Tanque de {g} gal', str(counts[g])])
-    rows.append(['Galonaje total de agente', f"{E.fmt_num(tanks.get('totalGallons'))} gal"])
-    rows.append(['Cartucho — opción nitrógeno (N2)', tanks.get('n2') or '—'])
-    rows.append(['Cartucho — opción CO2 (alternativa al N2, no ambos)', tanks.get('co2') or '—'])
-    return rows
+def _summary_rows(system, summary):
+    return [list(r) for r in system.summary_rows(summary)]
 
 
-def _equipment_rows(kitchen):
+def _equipment_rows(system, kitchen):
     rows = []
     for item in kitchen.get('equipment', []):
         r = item.get('result') or {}
         nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in (r.get('nozzles') or [])) or '—'
         brand_model = ' '.join(x for x in [item.get('brand'), item.get('model')] if x) or '—'
-        rows.append([category_display_label(item), brand_model, nozz_txt, E.fmt_num(r.get('flowNumber'))])
+        rows.append([system.category_display_label(item), brand_model, nozz_txt, E.fmt_num(r.get('flowNumber'))])
     return rows
 
 
-DISCLAIMER = D.PDF_DISCLAIMER
+def _flow_header(system):
+    return 'Flow pts' if system.flow_label == 'Flow points' else 'Flow'
 
 
 def _header_block(story, title, subtitle, project_name, extra_line, responsible, date, quote_number=''):
@@ -127,37 +118,60 @@ def _header_block(story, title, subtitle, project_name, extra_line, responsible,
     story.append(Spacer(1, 6))
 
 
+def _detail_block(story, system, kitchen):
+    """Buckeye: altura, colocación y página del manual de cada riesgo (en
+    ANSUL el reporte se queda como estaba)."""
+    if system.key != 'buckeye_bfr':
+        return
+    items = [i for i in kitchen.get('equipment', []) if i.get('result')]
+    if not items:
+        return
+    story.append(Paragraph(f"Detalle de protección por riesgo — {_esc(kitchen['name'])}", _STYLE_SECTION))
+    for i in items:
+        r = i['result']
+        dims = system.dimensions_display(i)
+        head = system.category_display_label(i) + (f' ({dims})' if dims else '')
+        story.append(Paragraph(f"<b>{_esc(head)}</b> — altura: {_esc(r.get('heightRange', '—'))}<br/>"
+                               f"{_esc(r.get('detail', ''))}", _STYLE_NOTE))
+
+
+def _esc(t):
+    return str(t).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+
+
 def build_kitchen_report_pdf(project, kitchen, out_path, responsible='', date=None, quote_number=''):
     date = date or today_iso()
-    s = E.kitchen_summary(kitchen)
+    system = systems.for_project(project)
+    s = system.kitchen_summary(kitchen)
     total_width = letter[0] - 2 * MARGIN
 
     doc = SimpleDocTemplate(str(out_path), pagesize=letter,
                              leftMargin=MARGIN, rightMargin=MARGIN, topMargin=MARGIN, bottomMargin=MARGIN)
     story = []
-    _header_block(story, 'Ansul Flow Calculator — Reporte de cálculo', 'Sistema ANSUL(R) R-102',
+    _header_block(story, 'Ansul Flow Calculator — Reporte de cálculo', system.report_subtitle,
                   project['name'], f"Proyecto: {project['name']}&nbsp;&nbsp;&nbsp;&nbsp;Sistema: {kitchen['name']}",
                   responsible, date, quote_number)
 
     story.append(Paragraph('Riesgos, ductos y plenos', _STYLE_SECTION))
-    eq_rows = _equipment_rows(kitchen)
+    eq_rows = _equipment_rows(system, kitchen)
     widths = [total_width * w / 6 for w in (1.9, 2.1, 1.3, 0.7)]
     story.append(_table(eq_rows or [['Sin riesgos', '—', '—', '—']], widths,
-                         header=['Tipo', 'Marca / Modelo', 'Boquillas', 'Flow'], num_cols={3}))
+                         header=['Tipo', 'Marca / Modelo', 'Boquillas', _flow_header(system)], num_cols={3}))
     story.append(Spacer(1, 8))
 
     story.append(Paragraph(f"Resumen de materiales — {kitchen['name']}", _STYLE_SECTION))
     widths2 = [total_width * 3 / 4, total_width * 1 / 4]
-    story.append(_table(_summary_rows(s), widths2, header=['Concepto', 'Cantidad'], num_cols={1}))
-    if s['tanks'].get('note'):
+    story.append(_table(_summary_rows(system, s), widths2, header=['Concepto', 'Cantidad'], num_cols={1}))
+    for note in system.summary_notes(s):
         story.append(Spacer(1, 4))
-        story.append(Paragraph(s['tanks']['note'], _STYLE_NOTE))
+        story.append(Paragraph(note, _STYLE_NOTE))
     story.append(Spacer(1, 8))
 
     story.append(Paragraph(f"Boquillas requeridas — {kitchen['name']}", _STYLE_SECTION))
-    story.append(_nozzle_breakdown_table(s['nozzleTotals'], total_width))
+    story.append(_nozzle_breakdown_table(system, s['nozzleTotals'], total_width))
+    _detail_block(story, system, kitchen)
     story.append(Spacer(1, 14))
-    story.append(Paragraph(DISCLAIMER, _STYLE_DIM))
+    story.append(Paragraph(system.disclaimer, _STYLE_DIM))
 
     doc.build(story)
     return out_path
@@ -165,27 +179,23 @@ def build_kitchen_report_pdf(project, kitchen, out_path, responsible='', date=No
 
 def build_project_report_pdf(project, out_path, responsible='', date=None, quote_number=''):
     date = date or today_iso()
-    ps = E.project_summary(project)
+    system = systems.for_project(project)
+    ps = system.project_summary(project)
     total_width = letter[0] - 2 * MARGIN
 
     doc = SimpleDocTemplate(str(out_path), pagesize=letter,
                              leftMargin=MARGIN, rightMargin=MARGIN, topMargin=MARGIN, bottomMargin=MARGIN)
     story = []
-    _header_block(story, 'Ansul Flow Calculator — Reporte general del proyecto', 'Sistema ANSUL(R) R-102',
+    _header_block(story, 'Ansul Flow Calculator — Reporte general del proyecto', system.report_subtitle,
                   project['name'], f"Proyecto: {project['name']}&nbsp;&nbsp;&nbsp;&nbsp;Sistemas: {len(project['kitchens'])}",
                   responsible, date, quote_number)
 
     story.append(Paragraph('Resumen general de materiales (todos los sistemas)', _STYLE_SECTION))
-    overall_rows = [
-        ['Sistemas', str(len(project['kitchens']))],
-        ['Capacidad total de flujo del proyecto (flow number)', E.fmt_num(ps['totalFlow'])],
-        ['Tanques totales a instalar', str(ps['totalTanks'])],
-        ['Galonaje total de agente', f"{E.fmt_num(ps['totalGallons'])} gal"],
-    ]
+    overall_rows = [['Sistemas', str(len(project['kitchens']))]] + [list(r) for r in system.project_rows(ps)]
     widths2 = [total_width * 3 / 4, total_width * 1 / 4]
     story.append(_table(overall_rows, widths2, header=['Concepto', 'Cantidad'], num_cols={1}))
     story.append(Spacer(1, 6))
-    story.append(_nozzle_breakdown_table(ps['nozzleTotals'], total_width))
+    story.append(_nozzle_breakdown_table(system, ps['nozzleTotals'], total_width))
     story.append(Spacer(1, 10))
 
     story.append(Paragraph('Detalle por sistema', _STYLE_SECTION))
@@ -193,20 +203,20 @@ def build_project_report_pdf(project, out_path, responsible='', date=None, quote
     for entry in ps['kitchenSummaries']:
         kitchen, summary = entry['kitchen'], entry['summary']
         story.append(Paragraph(kitchen['name'], _STYLE_SUBSECTION))
-        eq_rows = _equipment_rows(kitchen)
+        eq_rows = _equipment_rows(system, kitchen)
         story.append(_table(eq_rows or [['Sin riesgos', '—', '—', '—']], widths,
-                             header=['Tipo', 'Marca / Modelo', 'Boquillas', 'Flow'], num_cols={3}))
+                             header=['Tipo', 'Marca / Modelo', 'Boquillas', _flow_header(system)], num_cols={3}))
         story.append(Spacer(1, 4))
-        story.append(_table(_summary_rows(summary), widths2, header=['Concepto', 'Cantidad'], num_cols={1}))
-        if summary['tanks'].get('note'):
+        story.append(_table(_summary_rows(system, summary), widths2, header=['Concepto', 'Cantidad'], num_cols={1}))
+        for note in system.summary_notes(summary):
             story.append(Spacer(1, 3))
-            story.append(Paragraph(summary['tanks']['note'], _STYLE_NOTE))
+            story.append(Paragraph(note, _STYLE_NOTE))
         story.append(Spacer(1, 4))
-        story.append(_nozzle_breakdown_table(summary['nozzleTotals'], total_width))
+        story.append(_nozzle_breakdown_table(system, summary['nozzleTotals'], total_width))
         story.append(Spacer(1, 10))
 
     story.append(Spacer(1, 8))
-    story.append(Paragraph(DISCLAIMER, _STYLE_DIM))
+    story.append(Paragraph(system.disclaimer, _STYLE_DIM))
 
     doc.build(story)
     return out_path

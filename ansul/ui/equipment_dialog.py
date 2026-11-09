@@ -12,22 +12,25 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout, Q
                                 QComboBox, QPushButton, QDialogButtonBox, QListWidget, QListWidgetItem,
                                 QGroupBox, QMessageBox, QWidget, QScrollArea)
 
-from .. import data as D
 from .. import engine as E
-from .. import category_defs as CD
+from .. import systems
 from .form_widgets import DynamicForm
 from .catalog_dialog import CatalogPickerDialog
 from .diagram_widget import EquipmentDiagramWidget
 
 
 class EquipmentDialog(QDialog):
-    def __init__(self, store, existing_item=None, parent=None):
+    def __init__(self, store, existing_item=None, parent=None, system=None):
         super().__init__(parent)
         self.store = store
+        # Marca del proyecto (ANSUL por defecto): define categorías, campos y cálculo.
+        self.system = system or systems.get(None)
         self.existing_item = existing_item
         self.result_item = None
 
-        self.category = (existing_item or {}).get('category', 'fryer')
+        self.category = (existing_item or {}).get('category', self.system.category_order[0])
+        if self.category not in self.system.category_defs:
+            self.category = self.system.category_order[0]
         self.values = dict((existing_item or {}).get('input') or {})
         self.chosen_idx = (existing_item or {}).get('chosenIdx') or 0
         self.catalog_ref = (existing_item or {}).get('catalogRef')
@@ -38,7 +41,8 @@ class EquipmentDialog(QDialog):
         self.current_calc = None
         self.final_result = None
 
-        self.setWindowTitle('Editar riesgo' if existing_item else 'Agregar riesgo')
+        title = 'Editar riesgo' if existing_item else 'Agregar riesgo'
+        self.setWindowTitle(f'{title} — {self.system.label}')
         self.setMinimumWidth(520)
         self._build_ui()
         self._on_category_changed(initial=True)
@@ -49,9 +53,10 @@ class EquipmentDialog(QDialog):
 
         top_form = QFormLayout()
         self.category_combo = QComboBox()
-        for key in D.CATEGORY_ORDER:
-            self.category_combo.addItem(D.CATEGORY_LABELS[key], key)
-        self.category_combo.setCurrentIndex(D.CATEGORY_ORDER.index(self.category))
+        order = list(self.system.category_order)
+        for key in order:
+            self.category_combo.addItem(self.system.category_labels[key], key)
+        self.category_combo.setCurrentIndex(order.index(self.category))
         self.category_combo.currentIndexChanged.connect(self._category_index_changed)
         top_form.addRow('Categoría de riesgo', self.category_combo)
 
@@ -66,13 +71,15 @@ class EquipmentDialog(QDialog):
 
         catalog_row = QHBoxLayout()
         self.catalog_btn = QPushButton('Buscar en catálogo de modelos…')
+        self.catalog_btn.setVisible(self.system.supports_catalog)
         self.catalog_btn.clicked.connect(self._open_catalog_picker)
         self.clear_catalog_btn = QPushButton('Usar mis propias medidas')
         self.clear_catalog_btn.clicked.connect(self._clear_catalog_ref)
         self.clear_catalog_btn.setVisible(bool(self.catalog_ref))
         catalog_row.addWidget(self.catalog_btn)
         catalog_row.addWidget(self.clear_catalog_btn)
-        top_form.addRow('', catalog_row)
+        if self.system.supports_catalog:
+            top_form.addRow('', catalog_row)
 
         self.notes_edit = QLineEdit((self.existing_item or {}).get('notes', ''))
         self.notes_edit.setPlaceholderText('Notas (opcional)')
@@ -215,7 +222,7 @@ class EquipmentDialog(QDialog):
         self._recompute()
 
     def _rebuild_form(self):
-        cdef = CD.CATEGORY_DEFS[self.category]
+        cdef = self.system.category_defs[self.category]
         specs = cdef['fields'](self.values)
         self.form.build(specs, self.values)
 
@@ -264,8 +271,8 @@ class EquipmentDialog(QDialog):
 
     # ------------------------------------------------------------------
     def _recompute(self):
-        cdef = CD.CATEGORY_DEFS[self.category]
-        self.diagram.update_diagram(self.category, self.values, self.catalog_ref)
+        cdef = self.system.category_defs[self.category]
+        self.diagram.update_diagram(self.category, self.values, self.catalog_ref, self.system)
 
         if self.catalog_result is not None:
             self.choice_group.setVisible(False)
@@ -273,7 +280,7 @@ class EquipmentDialog(QDialog):
             self._show_result(self.final_result)
             return
 
-        if not CD.has_required_inputs(self.category, self.values):
+        if not self.system.has_required_inputs(self.category, self.values):
             self.choice_group.setVisible(False)
             self.final_result = None
             self.result_label.setText('Complete los datos requeridos (*) para calcular la boquilla.')
@@ -319,7 +326,7 @@ class EquipmentDialog(QDialog):
         if row < 0 or not self.current_calc:
             return
         self.chosen_idx = row
-        cdef = CD.CATEGORY_DEFS[self.category]
+        cdef = self.system.category_defs[self.category]
         self.final_result = cdef['result_from_choice'](self.current_calc, row)
         self._show_result(self.final_result)
 
@@ -328,14 +335,14 @@ class EquipmentDialog(QDialog):
             self._show_error('No se pudo calcular un resultado.')
             return
         nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in (result.get('nozzles') or [])) or 'Sin boquillas (informativo)'
-        text = (f"<b>Boquillas:</b> {nozz_txt} &nbsp;&nbsp; <b>Flow number:</b> {E.fmt_num(result.get('flowNumber'))}<br>"
+        text = (f"<b>Boquillas:</b> {nozz_txt} &nbsp;&nbsp; <b>{self.system.flow_label}:</b> {E.fmt_num(result.get('flowNumber'))}<br>"
                 f"<b>Altura de montaje:</b> {result.get('heightRange', '—')}<br>"
                 f"<b>Detalle:</b> {result.get('detail', '')}")
         self.result_label.setText(text)
         self.result_label.setStyleSheet('padding:8px; border:1px solid #2e7d32; background:#f1f8f2; border-radius:4px;')
 
     def _show_error(self, msg):
-        self.result_label.setText(msg or 'Estas medidas no encajan en ninguna opción estándar del manual R-102.')
+        self.result_label.setText(msg or f'Estas medidas no encajan en ninguna opción estándar del manual {self.system.label}.')
         self.result_label.setStyleSheet('padding:8px; border:1px solid #b71c1c; background:#fdf1f1; border-radius:4px; color:#7a1414;')
 
     # ------------------------------------------------------------------
