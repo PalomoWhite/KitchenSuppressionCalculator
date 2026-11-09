@@ -14,6 +14,23 @@ reportes PDF.
 > verificado y sellado por un diseñador certificado ANSUL R-102, conforme a
 > NFPA 17A y los códigos locales aplicables.
 
+## Marcas soportadas
+
+Al crear un proyecto se elige la marca; todos sus sistemas y riesgos son de
+esa marca (no hay proyectos mixtos):
+
+- **ANSUL R-102** — manual R-102 (Part No. 418087) y Hoja Resumen
+  F-2015158-01_LAS. Incluye el catálogo de modelos por marca y la selección
+  de tanques/cartuchos.
+- **Buckeye Kitchen Mister** — manual técnico BFR-TM Rev. 6 (2020-02-01):
+  coberturas fijas por equipo (p. 3-12), módulos para equipos grandes
+  (p. 3-11), ductos, plenos y precipitadores, y todas las combinaciones
+  posibles de cilindros BFR-5/10/15/20 para que el usuario elija.
+
+El diseño (cómo se organiza el código y qué decisiones se tomaron) está en
+[`docs/DISEÑO.md`](docs/DISEÑO.md); los datos del manual Buckeye con sus
+páginas, en [`docs/inventory_buckeye.md`](docs/inventory_buckeye.md).
+
 ## Instalación
 
 Requiere Python 3.9 o superior.
@@ -144,19 +161,26 @@ ansul/
   category_defs.py           Definición de campos de captura por categoría
   store.py                   Persistencia local en JSON (proyectos/sistemas/riesgos)
   report.py                  Generación de reportes PDF (reportlab)
+  systems/                   Registro de marcas (ver docs/DISEÑO.md)
+    ansul_r102.py            Adaptador de ANSUL R-102 (usa los módulos de arriba)
+    buckeye_bfr/             Buckeye Kitchen Mister: data, engine,
+                             category_defs y system
   ui/
     main_window.py           Ventana principal
     equipment_dialog.py       Formulario de captura/edición de equipo
     catalog_dialog.py         Selector y administrador de catálogo
-    reference_dialog.py       Ventana de referencia rápida
+    reference_dialog.py       Ventana de referencia rápida (ANSUL)
+    buckeye_reference_dialog.py  Referencia rápida Buckeye
     unit_converter_dialog.py  Convertidor pies / metros (menú Herramientas)
     diagram_widget.py         Diagrama en vivo del área protegida del equipo
     style.py                  Hoja de estilos Qt (QSS) con la paleta ANSUL
     form_widgets.py           Constructor de formularios dinámicos
 tests/
-  test_engine.py              Pruebas de regresión del motor de cálculo
-  _smoke_phase4.py            Prueba de humo de interfaz de escritorio
-                               (offscreen, no es parte de la suite automática)
+  test_engine.py              Pruebas de regresión del motor ANSUL
+  test_buckeye.py             Pruebas del motor Buckeye y del registro de marcas
+  _smoke_phase4.py            Prueba de humo de interfaz (ANSUL, offscreen)
+  _smoke_buckeye.py           Prueba de humo de interfaz (Buckeye, offscreen)
+docs/                         Diseño e inventario técnico Buckeye
 packaging/windows/            Archivos para generar el instalador de Windows
                                (spec de PyInstaller, script .bat, script de
                                Inno Setup, guía paso a paso)
@@ -170,7 +194,16 @@ El motor de cálculo tiene pruebas de regresión que no requieren interfaz
 gráfica:
 
 ```bash
-python tests/test_engine.py
+python -m tests              # todas las pruebas (ANSUL + Buckeye)
+python -m tests.test_engine  # solo ANSUL
+python -m tests.test_buckeye # solo Buckeye
+```
+
+Pruebas de humo de la interfaz (requieren PySide6, no abren ventanas):
+
+```bash
+QT_QPA_PLATFORM=offscreen python tests/_smoke_phase4.py
+QT_QPA_PLATFORM=offscreen python tests/_smoke_buckeye.py
 ```
 
 ## Notas de esta versión
