@@ -24,8 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt pyinstaller
 
-      - name: Pruebas del motor de cálculo
-        run: python tests/test_engine.py
+      - name: Pruebas del motor de cálculo (ANSUL + Buckeye)
+        run: python -m tests
 
       - name: Compilar con PyInstaller
         run: python -m PyInstaller --noconfirm packaging/windows/AnsulFlowCalculator.spec
