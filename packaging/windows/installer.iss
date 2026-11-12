@@ -13,7 +13,7 @@
 ; Cambia MyAppVersion cuando publiques una nueva versión.
 
 #define MyAppName "Kitchen Suppression Calculator"
-#define MyAppVersion "1.2.0"
+#define MyAppVersion "1.3.0"
 #define MyAppPublisher "Miguel Alejandro Gutiérrez Torres"
 #define MyAppExeName "KitchenSuppressionCalculator.exe"
 ; Ruta a la carpeta que generó PyInstaller (relativa a este .iss)
