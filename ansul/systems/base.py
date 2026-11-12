@@ -3,13 +3,14 @@
 SystemDef — lo que toda marca (ANSUL, Buckeye, …) le ofrece a la interfaz y
 al reporte PDF. Ver docs/DISEÑO.md, sección 3.
 """
+from ..i18n import tr
 
 
 class SystemDef:
     key = ''
     label = ''              # Nombre completo que ve el usuario
     short = ''              # Nombre corto (árbol de proyectos)
-    flow_label = 'Flow number'
+    flow_label = tr('Flow number')
     report_subtitle = ''
     disclaimer = ''
     disclaimer_short = ''
@@ -41,7 +42,7 @@ class SystemDef:
 
     # Boquillas
     def nozzle_columns(self):
-        return ['Boquilla', 'No. de parte', 'Cantidad']
+        return [tr('Boquilla'), tr('No. de parte'), tr('Cantidad')]
 
     def nozzle_row(self, code, qty):
         return [code, '—', str(qty)]

@@ -29,6 +29,7 @@ Cada definición de categoría expone:
 """
 from . import data as D
 from . import engine as E
+from .i18n import tr
 
 
 def _num(v):
@@ -45,7 +46,7 @@ def _module_suffix(m):
     per_module_qty = m.get('qty', 1)
     total = per_module_qty * n
     plural = 's' if total != 1 else ''
-    return f" · modularizado en {n} zonas (total {total} boquilla{plural} {m['nozzle']})"
+    return tr(' · modularizado en {0} zonas (total {1} boquilla{2} {3})').format(n, total, plural, m['nozzle'])
 
 
 # --------------------------------------------------------------------------
@@ -54,24 +55,24 @@ def _module_suffix(m):
 
 def _fryer_fields(v):
     fields = [
-        {'key': 'fuel', 'type': 'select', 'label': 'Combustible',
+        {'key': 'fuel', 'type': 'select', 'label': tr('Combustible'),
          'options': D.FUEL_OPTS_GAS_ELECTRIC, 'default': 'gas'},
-        {'key': 'hasDripboard', 'type': 'toggle', 'label': '¿Tiene escurridor (dripboard)?', 'default': False,
+        {'key': 'hasDripboard', 'type': 'toggle', 'label': tr('¿Tiene escurridor (dripboard)?'), 'default': False,
          'reflow': True},
-        {'key': 'frypotD', 'type': 'number', 'label': 'Largo de la tina (in)', 'hint': 'De frente a fondo'},
-        {'key': 'frypotL', 'type': 'number', 'label': 'Ancho de la tina (in)', 'hint': 'De lado a lado'},
+        {'key': 'frypotD', 'type': 'number', 'label': tr('Largo de la tina (in)'), 'hint': tr('De frente a fondo')},
+        {'key': 'frypotL', 'type': 'number', 'label': tr('Ancho de la tina (in)'), 'hint': tr('De lado a lado')},
     ]
     if v.get('hasDripboard'):
         fields += [
-            {'key': 'overallD', 'type': 'number', 'label': 'Largo total con escurridor (in)'},
-            {'key': 'overallL', 'type': 'number', 'label': 'Ancho total con escurridor (in)'},
+            {'key': 'overallD', 'type': 'number', 'label': tr('Largo total con escurridor (in)')},
+            {'key': 'overallL', 'type': 'number', 'label': tr('Ancho total con escurridor (in)')},
         ]
-    fields.append({'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
-                    'hint': 'Deje el valor en 1: si la freidora es más grande de lo que cubre una sola boquilla, '
-                            'el programa calcula automáticamente cuántos módulos (zonas) se necesitan y con qué '
-                            'boquilla, dividiendo el riesgo según el método del manual (pág. 4-10 a 4-12). Aumente '
-                            'el número solo si quiere forzar más zonas de las mínimas necesarias. Máx. 864 in² de '
-                            'área total (freidora, no aplica a sartén de volteo).'})
+    fields.append({'key': 'modules', 'type': 'number', 'label': tr('Número de módulos (opcional)'), 'default': 1, 'required': False,
+                    'hint': tr('Deje el valor en 1: si la freidora es más grande de lo que cubre una sola boquilla, el '
+                               'programa calcula automáticamente cuántos módulos (zonas) se necesitan y con qué boquilla, '
+                               'dividiendo el riesgo según el método del manual (pág. 4-10 a 4-12). Aumente el número '
+                               'solo si quiere forzar más zonas de las mínimas necesarias. Máx. 864 in² de área total '
+                               '(freidora, no aplica a sartén de volteo).')})
     return fields
 
 
@@ -83,10 +84,10 @@ def _fryer_compute(v):
 
 def _fryer_not_fit(v, c):
     if c.get('overLimit'):
-        return (f"El área total ({E.fmt_num(c['totalArea'])} in²) excede el máximo modularizable de 864 in². "
-                'Divídalo en riesgos independientes (esa área no se puede cubrir ni modularizando).')
-    return (f'Ninguna boquilla estándar cubre estas dimensiones, ni modularizando hasta {E.MAX_AUTO_MODULES} zonas. '
-            'Revise las medidas o consulte a ANSUL.')
+        return (tr('El área total ({0} in²) excede el máximo modularizable de 864 in². Divídalo en riesgos '
+                   'independientes (esa área no se puede cubrir ni modularizando).').format(E.fmt_num(c['totalArea'])))
+    return (tr('Ninguna boquilla estándar cubre estas dimensiones, ni modularizando hasta {0} zonas. '
+               'Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES))
 
 
 # --------------------------------------------------------------------------
@@ -95,12 +96,13 @@ def _fryer_not_fit(v, c):
 
 def _tiltskillet_fields(v):
     return [
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho (in)', 'hint': 'De lado a lado'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo (in)', 'hint': 'De frente a fondo'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
-         'hint': 'Deje el valor en 1: el programa divide automáticamente el sartén en tantas zonas (módulos) como '
-                 'se necesiten según el número de boquillas requerido (no aplica el límite de 864 in² de la '
-                 'freidora). Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho (in)'), 'hint': tr('De lado a lado')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo (in)'), 'hint': tr('De frente a fondo')},
+        {'key': 'modules', 'type': 'number', 'label': tr('Número de módulos (opcional)'), 'default': 1, 'required': False,
+         'hint': tr('Deje el valor en 1: el programa divide automáticamente el sartén en tantas zonas '
+                    '(módulos) como se necesiten según el número de boquillas requerido (no aplica el límite '
+                    'de 864 in² de la freidora). Aumente el número solo si quiere forzar más zonas de las '
+                    'mínimas necesarias.')},
     ]
 
 
@@ -110,23 +112,24 @@ def _tiltskillet_fields(v):
 
 def _range_fields(v):
     return [
-        {'key': 'burners', 'type': 'select', 'label': 'Número de quemadores (informativo)',
-         'options': [{'value': '1', 'label': '1 quemador'}, {'value': '2', 'label': '2 quemadores'},
-                     {'value': '4', 'label': '4 quemadores'}, {'value': '6', 'label': '6 quemadores'}],
+        {'key': 'burners', 'type': 'select', 'label': tr('Número de quemadores (informativo)'),
+         'options': [{'value': '1', 'label': tr('1 quemador')}, {'value': '2', 'label': tr('2 quemadores')},
+                     {'value': '4', 'label': tr('4 quemadores')}, {'value': '6', 'label': tr('6 quemadores')}],
          'default': '4', 'required': False,
-         'hint': 'Solo de referencia: el manual R-102 no distingue boquillas por número de quemadores, sino por '
-                 'las medidas del área de cocción — no cambia el cálculo.'},
-        {'key': 'fuel', 'type': 'select', 'label': 'Combustible (informativo)', 'options': D.FUEL_OPTS_ALL,
+         'hint': tr('Solo de referencia: el manual R-102 no distingue boquillas por número de quemadores, sino '
+                    'por las medidas del área de cocción — no cambia el cálculo.')},
+        {'key': 'fuel', 'type': 'select', 'label': tr('Combustible (informativo)'), 'options': D.FUEL_OPTS_ALL,
          'default': 'gas', 'required': False,
-         'hint': 'Solo de referencia: no cambia el cálculo de boquillas, que depende únicamente de las medidas.'},
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho del área de cocción (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo del área de cocción (in)'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
-         'hint': 'Deje el valor en 1: si la estufa es más grande de lo que cubre una sola boquilla (por ejemplo, '
-                 'una de 6 quemadores), el programa modulariza automáticamente el riesgo en tantas zonas como se '
-                 'necesiten y muestra todas las opciones de boquilla que apliquen (alta, media o baja '
-                 'proximidad) — no solo una fija. Aumente el número solo si quiere forzar más zonas de las '
-                 'mínimas necesarias.'},
+         'hint': tr('Solo de referencia: no cambia el cálculo de boquillas, que depende únicamente de las '
+                    'medidas.')},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho del área de cocción (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo del área de cocción (in)')},
+        {'key': 'modules', 'type': 'number', 'label': tr('Número de módulos (opcional)'), 'default': 1, 'required': False,
+         'hint': tr('Deje el valor en 1: si la estufa es más grande de lo que cubre una sola boquilla (por '
+                    'ejemplo, una de 6 quemadores), el programa modulariza automáticamente el riesgo en tantas '
+                    'zonas como se necesiten y muestra todas las opciones de boquilla que apliquen (alta, '
+                    'media o baja proximidad) — no solo una fija. Aumente el número solo si quiere forzar más '
+                    'zonas de las mínimas necesarias.')},
     ]
 
 
@@ -140,11 +143,11 @@ def _range_compute(v):
 
 def _griddle_fields(v):
     return [
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho de la superficie (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo de la superficie (in)'},
-        {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
-         'hint': 'Deje el valor en 1: el programa modulariza automáticamente una plancha sobredimensionada. '
-                 'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho de la superficie (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo de la superficie (in)')},
+        {'key': 'modules', 'type': 'number', 'label': tr('Número de módulos (opcional)'), 'default': 1, 'required': False,
+         'hint': tr('Deje el valor en 1: el programa modulariza automáticamente una plancha sobredimensionada. '
+                    'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.')},
     ]
 
 
@@ -152,18 +155,18 @@ def _griddle_fields(v):
 # Parrilla / Grill (gas o eléctrica)
 # --------------------------------------------------------------------------
 
-_MODULES_FIELD = {'key': 'modules', 'type': 'number', 'label': 'Número de módulos (opcional)', 'default': 1, 'required': False,
-                   'hint': 'Deje el valor en 1: el programa modulariza automáticamente un riesgo sobredimensionado. '
-                           'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.'}
+_MODULES_FIELD = {'key': 'modules', 'type': 'number', 'label': tr('Número de módulos (opcional)'), 'default': 1, 'required': False,
+                   'hint': tr('Deje el valor en 1: el programa modulariza automáticamente un riesgo sobredimensionado. '
+                              'Aumente el número solo si quiere forzar más zonas de las mínimas necesarias.')}
 
 
 def _grill_fields(v):
     return [
-        {'key': 'fuel', 'type': 'select', 'label': 'Combustible', 'options': D.FUEL_OPTS_GAS_ELECTRIC, 'default': 'gas'},
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho de la parrilla (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo de la parrilla (in)'},
-        {'key': 'depth', 'type': 'number', 'label': 'Profundidad de la cama de lava/cerámica (in, opcional)',
-         'required': False, 'hint': 'Solo aplica a variantes con lava rock/cerámica'},
+        {'key': 'fuel', 'type': 'select', 'label': tr('Combustible'), 'options': D.FUEL_OPTS_GAS_ELECTRIC, 'default': 'gas'},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho de la parrilla (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo de la parrilla (in)')},
+        {'key': 'depth', 'type': 'number', 'label': tr('Profundidad de la cama de lava/cerámica (in, opcional)'),
+         'required': False, 'hint': tr('Solo aplica a variantes con lava rock/cerámica')},
         dict(_MODULES_FIELD),
     ]
 
@@ -180,18 +183,18 @@ def _grill_compute(v):
 
 def _naturalcharcoal_fields(v):
     return [
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho del asador (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo del asador (in)'},
-        {'key': 'depth', 'type': 'number', 'label': 'Profundidad del carbón (in, opcional)', 'required': False},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho del asador (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo del asador (in)')},
+        {'key': 'depth', 'type': 'number', 'label': tr('Profundidad del carbón (in, opcional)'), 'required': False},
         dict(_MODULES_FIELD),
     ]
 
 
 def _woodgrill_fields(v):
     return [
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho del asador (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo del asador (in)'},
-        {'key': 'depth', 'type': 'number', 'label': 'Profundidad de la leña (in, opcional)', 'required': False},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho del asador (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo del asador (in)')},
+        {'key': 'depth', 'type': 'number', 'label': tr('Profundidad de la leña (in, opcional)'), 'required': False},
         dict(_MODULES_FIELD),
     ]
 
@@ -204,14 +207,15 @@ def _woodgrill_fields(v):
 
 def _robata_fields(v):
     return [
-        {'key': 'fuel', 'type': 'select', 'label': 'Combustible sólido',
+        {'key': 'fuel', 'type': 'select', 'label': tr('Combustible sólido'),
          'options': [{'value': 'charcoal', 'label': D.FUEL_LABELS['charcoal']},
                      {'value': 'wood', 'label': D.FUEL_LABELS['wood']}],
          'default': 'charcoal'},
-        {'key': 'd1', 'type': 'number', 'label': 'Ancho del robata (in)'},
-        {'key': 'd2', 'type': 'number', 'label': 'Largo del robata (in)'},
-        {'key': 'depth', 'type': 'number', 'label': 'Profundidad del carbón/leña (in, opcional)', 'required': False,
-         'hint': 'Para leña, verifique también el diámetro máximo de troza (4 in) en el detalle del resultado.'},
+        {'key': 'd1', 'type': 'number', 'label': tr('Ancho del robata (in)')},
+        {'key': 'd2', 'type': 'number', 'label': tr('Largo del robata (in)')},
+        {'key': 'depth', 'type': 'number', 'label': tr('Profundidad del carbón/leña (in, opcional)'), 'required': False,
+         'hint': tr('Para leña, verifique también el diámetro máximo de troza (4 in) en el detalle del '
+                    'resultado.')},
         dict(_MODULES_FIELD),
     ]
 
@@ -229,15 +233,15 @@ def _robata_compute(v):
 
 def _combioven_fields(v):
     return [{'key': '_info', 'type': 'info',
-             'label': 'El manual R-102 no incluye una boquilla estándar para hornos combi con gabinete cerrado '
-                       '(protección tipo UL 300 dentro del gabinete). Este renglón se registra solo como '
-                       'referencia — no aporta boquillas ni flow number. Si el gabinete permanece abierto '
-                       'durante la cocción, consulte a ANSUL para una aplicación específica.'}]
+             'label': tr('El manual R-102 no incluye una boquilla estándar para hornos combi con gabinete cerrado '
+                         '(protección tipo UL 300 dentro del gabinete). Este renglón se registra solo como '
+                         'referencia — no aporta boquillas ni flow number. Si el gabinete permanece abierto durante '
+                         'la cocción, consulte a ANSUL para una aplicación específica.')}]
 
 
 def _combioven_compute(v):
     return {'ok': True, 'result': {'nozzles': [], 'flowNumber': 0,
-                                    'detail': 'Horno Combi — no cubierto por el catálogo estándar R-102 (informativo).',
+                                    'detail': tr('Horno Combi — no cubierto por el catálogo estándar R-102 (informativo).'),
                                     'heightRange': '—'}}
 
 
@@ -248,16 +252,16 @@ def _combioven_compute(v):
 
 def _kettle_fields(v):
     return [{'key': '_info', 'type': 'info',
-             'label': 'La marmita (kettle) no requiere protección bajo el manual R-102: al cocinar con agua/vapor '
-                       '(no con aceite) no genera vapores grasosos, así que no está listada en el catálogo de '
-                       'boquillas. Este renglón se registra solo como referencia — no aporta boquillas ni flow '
-                       'number. Si la marmita se usa para freír o genera grasa, consulte a ANSUL para una '
-                       'aplicación específica.'}]
+             'label': tr('La marmita (kettle) no requiere protección bajo el manual R-102: al cocinar con '
+                         'agua/vapor (no con aceite) no genera vapores grasosos, así que no está listada en el '
+                         'catálogo de boquillas. Este renglón se registra solo como referencia — no aporta '
+                         'boquillas ni flow number. Si la marmita se usa para freír o genera grasa, consulte a '
+                         'ANSUL para una aplicación específica.')}]
 
 
 def _kettle_compute(v):
     return {'ok': True, 'result': {'nozzles': [], 'flowNumber': 0,
-                                    'detail': 'Marmita — no requiere protección bajo el catálogo estándar R-102 (informativo).',
+                                    'detail': tr('Marmita — no requiere protección bajo el catálogo estándar R-102 (informativo).'),
                                     'heightRange': '—'}}
 
 
@@ -268,18 +272,18 @@ def _kettle_compute(v):
 def _chainbroiler_fields(v):
     kind = v.get('kind') or 'horizontal'
     fields = [
-        {'key': 'kind', 'type': 'select', 'label': 'Tipo de protección',
+        {'key': 'kind', 'type': 'select', 'label': tr('Tipo de protección'),
          'options': [{'value': 'horizontal', 'label': D.CHAIN_BROILER_OPTIONS['horizontal']['label']},
                      {'value': 'overhead', 'label': D.CHAIN_BROILER_OPTIONS['overhead']['label']}],
          'default': 'horizontal', 'reflow': True},
-        {'key': 'length', 'type': 'number', 'label': 'Largo interno (in)', 'hint': 'De frente a fondo, dentro de la cámara'},
-        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'De lado a lado, dentro de la cámara'},
+        {'key': 'length', 'type': 'number', 'label': tr('Largo interno (in)'), 'hint': tr('De frente a fondo, dentro de la cámara')},
+        {'key': 'width', 'type': 'number', 'label': tr('Ancho interno (in)'), 'hint': tr('De lado a lado, dentro de la cámara')},
     ]
     if kind == 'overhead':
         fields += [
-            {'key': 'openingL', 'type': 'number', 'label': 'Abertura — largo (in)', 'required': False},
-            {'key': 'openingW', 'type': 'number', 'label': 'Abertura — ancho (in)', 'required': False,
-             'hint': 'Opcional: valida la regla del 60% mínimo de abertura.'},
+            {'key': 'openingL', 'type': 'number', 'label': tr('Abertura — largo (in)'), 'required': False},
+            {'key': 'openingW', 'type': 'number', 'label': tr('Abertura — ancho (in)'), 'required': False,
+             'hint': tr('Opcional: valida la regla del 60% mínimo de abertura.')},
         ]
     return fields
 
@@ -293,8 +297,8 @@ def _chainbroiler_compute(v):
 
 def _chainbroiler_not_fit(v, c):
     opt = c['opt']
-    return (f"Excede el tamaño máximo interno ({opt['maxLength']} × {opt['maxWidth']} in) para esta variante. "
-            'Pruebe la otra variante o proteja como riesgos separados.')
+    return (tr('Excede el tamaño máximo interno ({0} × {1} in) para esta variante. Pruebe la otra '
+               'variante o proteja como riesgos separados.').format(opt['maxLength'], opt['maxWidth']))
 
 
 # --------------------------------------------------------------------------
@@ -303,14 +307,14 @@ def _chainbroiler_not_fit(v, c):
 
 def _uprightbroiler_fields(v):
     return [
-        {'key': 'length', 'type': 'number', 'label': 'Largo interno (in)', 'hint': 'De frente a fondo, dentro de la cámara'},
-        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'De lado a lado, dentro de la cámara'},
+        {'key': 'length', 'type': 'number', 'label': tr('Largo interno (in)'), 'hint': tr('De frente a fondo, dentro de la cámara')},
+        {'key': 'width', 'type': 'number', 'label': tr('Ancho interno (in)'), 'hint': tr('De lado a lado, dentro de la cámara')},
     ]
 
 
 def _uprightbroiler_not_fit(v, c):
     ub = D.UPRIGHT_BROILER
-    return f"Excede el máximo estándar ({ub['maxLength']} × {ub['maxWidth']} in). Consulte a ANSUL para aplicación específica."
+    return tr('Excede el máximo estándar ({0} × {1} in). Consulte a ANSUL para aplicación específica.').format(ub['maxLength'], ub['maxWidth'])
 
 
 # --------------------------------------------------------------------------
@@ -319,8 +323,8 @@ def _uprightbroiler_not_fit(v, c):
 
 def _salamander_fields(v):
     return [
-        {'key': 'length', 'type': 'number', 'label': 'Fondo interno (in)', 'hint': 'Cámara interna, de frente a fondo.'},
-        {'key': 'width', 'type': 'number', 'label': 'Ancho interno (in)', 'hint': 'Cámara interna, de lado a lado.'},
+        {'key': 'length', 'type': 'number', 'label': tr('Fondo interno (in)'), 'hint': tr('Cámara interna, de frente a fondo.')},
+        {'key': 'width', 'type': 'number', 'label': tr('Ancho interno (in)'), 'hint': tr('Cámara interna, de lado a lado.')},
     ]
 
 
@@ -334,8 +338,8 @@ def _salamander_compute(v):
 
 def _wok_fields(v):
     return [
-        {'key': 'diam', 'type': 'number', 'label': 'Diámetro del wok (in)', 'hint': 'Diámetro superior, boca del wok'},
-        {'key': 'depth', 'type': 'number', 'label': 'Profundidad del wok (in)', 'hint': 'Del borde superior al fondo'},
+        {'key': 'diam', 'type': 'number', 'label': tr('Diámetro del wok (in)'), 'hint': tr('Diámetro superior, boca del wok')},
+        {'key': 'depth', 'type': 'number', 'label': tr('Profundidad del wok (in)'), 'hint': tr('Del borde superior al fondo')},
     ]
 
 
@@ -349,16 +353,16 @@ def _wok_compute(v):
 
 def _duct_fields(v):
     is_round = bool(v.get('round'))
-    fields = [{'key': 'round', 'type': 'toggle', 'label': 'Ducto redondo', 'default': False, 'reflow': True}]
+    fields = [{'key': 'round', 'type': 'toggle', 'label': tr('Ducto redondo'), 'default': False, 'reflow': True}]
     if is_round:
-        fields.append({'key': 'diameter', 'type': 'number', 'label': 'Diámetro (in)'})
+        fields.append({'key': 'diameter', 'type': 'number', 'label': tr('Diámetro (in)')})
     else:
         fields += [
-            {'key': 'sideA', 'type': 'number', 'label': 'Ancho del ducto (in)'},
-            {'key': 'sideB', 'type': 'number', 'label': 'Alto del ducto (in)'},
+            {'key': 'sideA', 'type': 'number', 'label': tr('Ancho del ducto (in)')},
+            {'key': 'sideB', 'type': 'number', 'label': tr('Alto del ducto (in)')},
         ]
-    fields.append({'key': 'qty', 'type': 'number', 'label': 'Cantidad de ductos idénticos', 'default': 1,
-                    'hint': 'Las boquillas se multiplican por esta cantidad si hay más de un ducto igual en el sistema.'})
+    fields.append({'key': 'qty', 'type': 'number', 'label': tr('Cantidad de ductos idénticos'), 'default': 1,
+                    'hint': tr('Las boquillas se multiplican por esta cantidad si hay más de un ducto igual en el sistema.')})
     return fields
 
 
@@ -372,12 +376,12 @@ def _duct_compute(v):
     r = E.calc_duct(perimeter, _num(v.get('diameter')) if is_round else None, is_round, v.get('qty') or 1)
     if r.get('ok'):
         r['result'] = {'nozzles': r['nozzles'], 'flowNumber': r['flowNumber'], 'detail': r['detail'],
-                        'heightRange': '2 a 8 in dentro de la abertura del ducto'}
+                        'heightRange': tr('2 a 8 in dentro de la abertura del ducto')}
     return r
 
 
 def _duct_not_fit(v, c):
-    return c.get('msg') or 'No se pudo calcular con estas medidas.'
+    return c.get('msg') or tr('No se pudo calcular con estas medidas.')
 
 
 # --------------------------------------------------------------------------
@@ -388,20 +392,20 @@ def _plenum_fields(v):
     kind = v.get('kind') or 'horizSingle1N'
     opt = D.PLENUM_OPTIONS[kind]
     fields = [
-        {'key': 'kind', 'type': 'select', 'label': 'Tipo de protección',
+        {'key': 'kind', 'type': 'select', 'label': tr('Tipo de protección'),
          'options': [{'value': k, 'label': o['label']} for k, o in D.PLENUM_OPTIONS.items()], 'default': kind,
          'reflow': True},
-        {'key': 'lengthM', 'type': 'number', 'label': 'Largo del pleno (m)'},
+        {'key': 'lengthM', 'type': 'number', 'label': tr('Largo del pleno (m)')},
     ]
     if 'maxWidthFt' in opt:
         max_width_m = E.fmt_num(E.ft_to_m(opt['maxWidthFt']))
-        fields.append({'key': 'widthM', 'type': 'number', 'label': 'Ancho de pleno (m)',
-                        'hint': f'Máximo permitido para esta variante: {max_width_m} m ({opt["maxWidthFt"]} ft).'})
+        fields.append({'key': 'widthM', 'type': 'number', 'label': tr('Ancho de pleno (m)'),
+                        'hint': tr('Máximo permitido para esta variante: {0} m ({1} ft).').format(max_width_m, opt["maxWidthFt"])})
     else:
-        fields.append({'key': 'widthM', 'type': 'number', 'label': 'Ancho de pleno (m, opcional)', 'required': False,
-                        'hint': 'Referencia informativa; esta variante no tiene un ancho máximo tabulado.'})
-    fields.append({'key': 'qty', 'type': 'number', 'label': 'Cantidad de plenos idénticos', 'default': 1,
-                    'hint': 'Las boquillas se multiplican por esta cantidad si hay más de un pleno igual en el sistema.'})
+        fields.append({'key': 'widthM', 'type': 'number', 'label': tr('Ancho de pleno (m, opcional)'), 'required': False,
+                        'hint': tr('Referencia informativa; esta variante no tiene un ancho máximo tabulado.')})
+    fields.append({'key': 'qty', 'type': 'number', 'label': tr('Cantidad de plenos idénticos'), 'default': 1,
+                    'hint': tr('Las boquillas se multiplican por esta cantidad si hay más de un pleno igual en el sistema.')})
     return fields
 
 
@@ -435,16 +439,16 @@ def _plenum_compute(v):
     # usuario.
     detail = f"{opt['label']} — {E.fmt_num(length_m)} m"
     if qty > 1:
-        detail += f" — × {qty} plenos"
+        detail += tr(' — × {0} plenos').format(qty)
     result['detail'] = detail
     return {'ok': True, 'result': result}
 
 
 def _plenum_not_fit(v, c):
     if c.get('widthExceeded'):
-        return (f"El ancho capturado excede el máximo permitido de {E.fmt_num(c['maxWidthM'])} m para esta "
-                'variante de pleno. Reduzca el ancho o elija otra variante de protección.')
-    return 'Indique la longitud (y, si aplica, el ancho) del pleno en metros.'
+        return (tr('El ancho capturado excede el máximo permitido de {0} m para esta variante de pleno. '
+                   'Reduzca el ancho o elija otra variante de protección.').format(E.fmt_num(c['maxWidthM'])))
+    return tr('Indique la longitud (y, si aplica, el ancho) del pleno en metros.')
 
 
 # --------------------------------------------------------------------------
@@ -452,7 +456,7 @@ def _plenum_not_fit(v, c):
 # --------------------------------------------------------------------------
 
 def _precipitator_fields(v):
-    return [{'key': 'cells', 'type': 'number', 'label': 'Número de celdas', 'default': 1}]
+    return [{'key': 'cells', 'type': 'number', 'label': tr('Número de celdas'), 'default': 1}]
 
 
 def _precipitator_compute(v):
@@ -469,8 +473,8 @@ CATEGORY_DEFS = {
         'required_fields': lambda v: (['frypotD', 'frypotL', 'overallD', 'overallL'] if v.get('hasDripboard')
                                        else ['frypotD', 'frypotL']),
         'compute': _fryer_compute,
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: f"Altura de la boquilla sobre la tina: {m['hmin']} a {m['hmax']} in · Flow number: {m['flowPerNozzle']}",
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: tr('Altura de la boquilla sobre la tina: {0} a {1} in · Flow number: {2}').format(m['hmin'], m['hmax'], m['flowPerNozzle']),
         'result_from_choice': lambda c, i: E.fryer_result_for_choice(c, i),
         'not_fit_msg': _fryer_not_fit,
     },
@@ -478,45 +482,41 @@ CATEGORY_DEFS = {
         'has_choice': True, 'fields': _tiltskillet_fields,
         'required_fields': lambda v: ['d1', 'd2'],
         'compute': lambda v: E.calc_tilt_skillet(_num(v.get('d1')), _num(v.get('d2')), v.get('modules') or 1),
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: f"Altura de la boquilla sobre la superficie: {m['hmin']} a {m['hmax']} in · Flow number: {m['flowPerNozzle']}",
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: tr('Altura de la boquilla sobre la superficie: {0} a {1} in · Flow number: {2}').format(m['hmin'], m['hmax'], m['flowPerNozzle']),
         'result_from_choice': lambda c, i: E.tilt_skillet_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: (f'Ninguna boquilla estándar cubre estas dimensiones, ni modularizando hasta '
-                                      f'{E.MAX_AUTO_MODULES} zonas. Revise las medidas o consulte a ANSUL.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna boquilla estándar cubre estas dimensiones, ni modularizando hasta {0} zonas. '
+                                        'Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES)),
     },
     'range': {
         'has_choice': True, 'fields': _range_fields,
         'required_fields': lambda v: ['d1', 'd2'],
         'compute': _range_compute,
-        'choice_label': lambda m: f"Boquilla {m['nozzle']}" + (f" ×{m['qty']}" if m['qty'] > 1 else '') + f" — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · Lado máx {m['longSide']} in",
+        'choice_label': lambda m: tr('Boquilla {0}').format(m['nozzle']) + (f" ×{m['qty']}" if m['qty'] > 1 else '') + f" — {m['tag']}{_module_suffix(m)}",
+        'choice_sub': lambda m: tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']),
         'result_from_choice': lambda c, i: E.long_side_area_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna opción estándar cubre esta área, ni modularizando hasta '
-                                      f'{E.MAX_AUTO_MODULES} zonas. Revise las medidas, o indique manualmente '
-                                      'más módulos si sabe que necesitará más zonas.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna opción estándar cubre esta área, ni modularizando hasta {0} zonas. Revise las '
+                                        'medidas, o indique manualmente más módulos si sabe que necesitará más zonas.').format(E.MAX_AUTO_MODULES)),
     },
     'griddle': {
         'has_choice': True, 'fields': _griddle_fields,
         'required_fields': lambda v: ['d1', 'd2'],
         'compute': lambda v: E.calc_long_side_area(D.GRIDDLE_OPTIONS, _num(v.get('d1')), _num(v.get('d2')), v.get('modules') or 1),
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · Lado máx {m['longSide']} in",
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']),
         'result_from_choice': lambda c, i: E.long_side_area_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna opción estándar cubre esta área, ni modularizando hasta '
-                                      f'{E.MAX_AUTO_MODULES} zonas. Revise las medidas, o indique manualmente '
-                                      'más módulos si sabe que necesitará más zonas.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna opción estándar cubre esta área, ni modularizando hasta {0} zonas. Revise las '
+                                        'medidas, o indique manualmente más módulos si sabe que necesitará más zonas.').format(E.MAX_AUTO_MODULES)),
     },
     'grill': {
         'has_choice': True, 'fields': _grill_fields,
         'required_fields': lambda v: ['d1', 'd2'],
         'compute': _grill_compute,
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: (f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · "
-                                  f"Lado máx {m['longSide']} in" + (f" · Profundidad máx {m['maxDepth']} in" if m.get('maxDepth') else '')),
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: (tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']) + (tr(' · Profundidad máx {0} in').format(m['maxDepth']) if m.get('maxDepth') else '')),
         'result_from_choice': lambda c, i: E.grill_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna variante estándar de parrilla cubre estas dimensiones/combustible, '
-                                      f'ni modularizando hasta {E.MAX_AUTO_MODULES} zonas. Revise las medidas o '
-                                      'consulte a ANSUL.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna variante estándar de parrilla cubre estas dimensiones/combustible, ni '
+                                        'modularizando hasta {0} zonas. Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES)),
     },
     'naturalcharcoal': {
         'has_choice': True, 'fields': _naturalcharcoal_fields,
@@ -524,13 +524,11 @@ CATEGORY_DEFS = {
         'compute': lambda v: E.calc_grill('charcoal', _num(v.get('d1')), _num(v.get('d2')),
                                            _num(v.get('depth')) if v.get('depth') not in (None, '') else None,
                                            v.get('modules') or 1),
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: (f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · "
-                                  f"Lado máx {m['longSide']} in" + (f" · Profundidad máx {m['maxDepth']} in" if m.get('maxDepth') else '')),
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: (tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']) + (tr(' · Profundidad máx {0} in').format(m['maxDepth']) if m.get('maxDepth') else '')),
         'result_from_choice': lambda c, i: E.grill_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna variante estándar de asador de carbón cubre estas dimensiones, ni '
-                                      f'modularizando hasta {E.MAX_AUTO_MODULES} zonas. Revise las medidas o '
-                                      'consulte a ANSUL.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna variante estándar de asador de carbón cubre estas dimensiones, ni modularizando '
+                                        'hasta {0} zonas. Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES)),
     },
     'woodgrill': {
         'has_choice': True, 'fields': _woodgrill_fields,
@@ -538,25 +536,21 @@ CATEGORY_DEFS = {
         'compute': lambda v: E.calc_grill('wood', _num(v.get('d1')), _num(v.get('d2')),
                                            _num(v.get('depth')) if v.get('depth') not in (None, '') else None,
                                            v.get('modules') or 1),
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: (f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · "
-                                  f"Lado máx {m['longSide']} in" + (f" · Profundidad máx {m['maxDepth']} in" if m.get('maxDepth') else '')),
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: (tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']) + (tr(' · Profundidad máx {0} in').format(m['maxDepth']) if m.get('maxDepth') else '')),
         'result_from_choice': lambda c, i: E.grill_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna variante estándar de asador de leña cubre estas dimensiones, ni '
-                                      f'modularizando hasta {E.MAX_AUTO_MODULES} zonas. Revise las medidas o '
-                                      'consulte a ANSUL.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna variante estándar de asador de leña cubre estas dimensiones, ni modularizando '
+                                        'hasta {0} zonas. Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES)),
     },
     'robata': {
         'has_choice': True, 'fields': _robata_fields,
         'required_fields': lambda v: ['d1', 'd2'],
         'compute': _robata_compute,
-        'choice_label': lambda m: f"Boquilla {m['nozzle']} — {m['tag']}{_module_suffix(m)}",
-        'choice_sub': lambda m: (f"Altura: {m['hmin']} a {m['hmax']} in · Área máx {m['area']} in² · "
-                                  f"Lado máx {m['longSide']} in" + (f" · Profundidad máx {m['maxDepth']} in" if m.get('maxDepth') else '')),
+        'choice_label': lambda m: tr('Boquilla {0} — {1}{2}').format(m['nozzle'], m['tag'], _module_suffix(m)),
+        'choice_sub': lambda m: (tr('Altura: {0} a {1} in · Área máx {2} in² · Lado máx {3} in').format(m['hmin'], m['hmax'], m['area'], m['longSide']) + (tr(' · Profundidad máx {0} in').format(m['maxDepth']) if m.get('maxDepth') else '')),
         'result_from_choice': lambda c, i: E.grill_result_for_choice(c, i),
-        'not_fit_msg': lambda v, c: ('Ninguna variante estándar de robata (boquillas 1N/3N para combustible sólido) '
-                                      f'cubre estas dimensiones, ni modularizando hasta {E.MAX_AUTO_MODULES} zonas. '
-                                      'Revise las medidas o consulte a ANSUL.'),
+        'not_fit_msg': lambda v, c: (tr('Ninguna variante estándar de robata (boquillas 1N/3N para combustible sólido) cubre estas '
+                                        'dimensiones, ni modularizando hasta {0} zonas. Revise las medidas o consulte a ANSUL.').format(E.MAX_AUTO_MODULES)),
     },
     'combioven': {
         'has_choice': False, 'fields': _combioven_fields,
@@ -587,19 +581,19 @@ CATEGORY_DEFS = {
         'required_fields': lambda v: ['length', 'width'],
         'compute': _salamander_compute,
         'choice_label': lambda m: m['label'],
-        'choice_sub': lambda m: f"Cámara interna máx.: {m['maxWidth']} in de ancho × {m['maxDepth']} in de fondo",
+        'choice_sub': lambda m: tr('Cámara interna máx.: {0} in de ancho × {1} in de fondo').format(m['maxWidth'], m['maxDepth']),
         'result_from_choice': lambda c, i: (E.salamander_result(c['matches'][i]) if 0 <= i < len(c['matches']) else None),
-        'not_fit_msg': lambda v, c: 'Ninguna de las 3 opciones de salamandra cubre estas dimensiones.',
+        'not_fit_msg': lambda v, c: tr('Ninguna de las 3 opciones de salamandra cubre estas dimensiones.'),
     },
     'wok': {
         'has_choice': True, 'fields': _wok_fields,
         'required_fields': lambda v: ['diam', 'depth'],
         'compute': _wok_compute,
-        'choice_label': lambda m: f"Boquilla {m['nozzle']}",
-        'choice_sub': lambda m: (f"Diámetro {m['diamMin']}-{m['diamMax']} in · Profundidad {m['depthMin']}-{m['depthMax']} in "
-                                  f"· Altura de la boquilla sobre el wok: {m['hmin']}-{m['hmax']} in"),
+        'choice_label': lambda m: tr('Boquilla {0}').format(m['nozzle']),
+        'choice_sub': lambda m: (tr('Diámetro {0}-{1} in · Profundidad {2}-{3} in · Altura de la boquilla sobre el wok: '
+                                    '{4}-{5} in').format(m['diamMin'], m['diamMax'], m['depthMin'], m['depthMax'], m['hmin'], m['hmax'])),
         'result_from_choice': lambda c, i: (E.wok_result(c['matches'][i]) if 0 <= i < len(c['matches']) else None),
-        'not_fit_msg': lambda v, c: 'Ningún wok estándar cubre este diámetro/profundidad.',
+        'not_fit_msg': lambda v, c: tr('Ningún wok estándar cubre este diámetro/profundidad.'),
     },
     'duct': {
         'has_choice': False, 'fields': _duct_fields,
@@ -643,7 +637,7 @@ def has_required_inputs(category, values):
 def category_display_label(item):
     if item.get('category') == 'range' and item.get('input', {}).get('burners'):
         b = item['input']['burners']
-        return f'Estufa {b} Quemadores / Range {b} Burner'
+        return tr('Estufa {0} Quemadores / Range {1} Burner').format(b, b)
     return D.CATEGORY_LABELS.get(item.get('category'), item.get('category'))
 
 
@@ -685,12 +679,12 @@ def dimensions_display(item):
 
     if category == 'wok':
         d = n('diam')
-        return f'Ø{E.fmt_num(d)} in' if d is not None else None
+        return tr('Ø{0} in').format(E.fmt_num(d)) if d is not None else None
 
     if category == 'duct':
         if v.get('round'):
             d = n('diameter')
-            return f'Ø{E.fmt_num(d)} in' if d is not None else None
+            return tr('Ø{0} in').format(E.fmt_num(d)) if d is not None else None
         return _fmt_pair(n('sideA'), n('sideB'), 'in')  # Ancho x Alto del ducto
 
     if category == 'plenum':
@@ -715,6 +709,6 @@ def depth_display(item):
 
     if category in ('wok', 'grill', 'naturalcharcoal', 'woodgrill', 'robata'):
         d = n('depth')
-        return f'{E.fmt_num(d)} in' if d is not None else None
+        return tr('{0} in').format(E.fmt_num(d)) if d is not None else None
 
     return None

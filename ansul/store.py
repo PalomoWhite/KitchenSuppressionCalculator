@@ -18,19 +18,10 @@ from pathlib import Path
 
 from . import data as D
 from . import systems
+from . import i18n
 
-APP_DIR_NAME = 'AnsulFlowCalculator'
-
-
-def default_data_dir():
-    """Carpeta de datos por defecto: Documentos/AnsulFlowCalculator (o el
-    home del usuario si no existe una carpeta de Documentos estándar)."""
-    home = Path.home()
-    candidates = [home / 'Documents', home / 'Documentos']
-    for c in candidates:
-        if c.is_dir():
-            return c / APP_DIR_NAME
-    return home / APP_DIR_NAME
+from .settings import APP_DIR_NAME, default_data_dir  # noqa: F401  (se re-exporta)
+from .i18n import tr
 
 
 def uid():
@@ -89,9 +80,57 @@ class Store:
                     if mapped:
                         item['category'] = mapped
                         migrated = True
+        # Los textos de cada resultado (detalle, altura) se guardan en el idioma
+        # en que se calcularon. Si el usuario cambió de idioma, se regeneran.
+        if self.data.get('resultsLang', 'es') != i18n.language():
+            self.regenerate_result_texts()
+            self.data['resultsLang'] = i18n.language()
+            migrated = True
         if migrated:
             self.save()
         return self.data
+
+    @staticmethod
+    def recompute_result(item, system):
+        """Vuelve a calcular el resultado de un riesgo con sus medidas guardadas.
+        Regresa None si no se puede (datos de catálogo, categoría o elección
+        que ya no existen)."""
+        if (item.get('catalogRef') or {}).get('hasFixedNozzles'):
+            return None
+        cdef = system.category_defs.get(item.get('category'))
+        values = item.get('input') or {}
+        if not cdef or not system.has_required_inputs(item['category'], values):
+            return None
+        try:
+            calc = cdef['compute'](values)
+            if cdef.get('has_choice'):
+                matches = calc.get('matches') or []
+                idx = item.get('chosenIdx', 0) or 0
+                if not calc.get('ok') or not (0 <= idx < len(matches)):
+                    return None
+                return cdef['result_from_choice'](calc, idx)
+            return calc.get('result') if calc.get('ok') else None
+        except Exception:  # nunca romper la carga por un riesgo raro
+            return None
+
+    def regenerate_result_texts(self):
+        """Regenera los textos de los resultados en el idioma activo. Solo
+        reemplaza el resultado si las boquillas y el flow number salen
+        IDÉNTICOS; si no, deja el resultado como estaba (no cambia cálculos)."""
+        changed = 0
+        for p in self.data.get('projects', []):
+            system = systems.for_project(p)
+            for k in p.get('kitchens', []):
+                for item in k.get('equipment', []):
+                    old = item.get('result')
+                    new = self.recompute_result(item, system)
+                    if not old or not new:
+                        continue
+                    if (new.get('nozzles') == old.get('nozzles')
+                            and new.get('flowNumber') == old.get('flowNumber')):
+                        item['result'] = new
+                        changed += 1
+        return changed
 
     def save(self):
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -141,8 +180,8 @@ class Store:
     def add_project(self, name, system=None):
         system = system or systems.DEFAULT_SYSTEM
         if not systems.is_valid(system):
-            raise ValueError(f'Marca desconocida: {system}')
-        p = {'id': uid(), 'name': name or 'Proyecto sin nombre', 'system': system,
+            raise ValueError(tr('Marca desconocida: {0}').format(system))
+        p = {'id': uid(), 'name': name or tr('Proyecto sin nombre'), 'system': system,
              'createdAt': int(time.time() * 1000), 'kitchens': []}
         self.data['projects'].insert(0, p)
         self.save()
@@ -165,9 +204,9 @@ class Store:
         if not p:
             return None
         if not systems.is_valid(system):
-            raise ValueError(f'Marca desconocida: {system}')
+            raise ValueError(tr('Marca desconocida: {0}').format(system))
         if p.get('system') != system and self.project_has_equipment(p):
-            raise ValueError('No se puede cambiar la marca de un proyecto que ya tiene riesgos.')
+            raise ValueError(tr('No se puede cambiar la marca de un proyecto que ya tiene riesgos.'))
         p['system'] = system
         for k in p.get('kitchens', []):
             k.pop('tankOverride', None)
@@ -189,7 +228,7 @@ class Store:
         p = self.get_project(pid)
         if not p:
             return None
-        k = {'id': uid(), 'name': name or 'Sistema sin nombre',
+        k = {'id': uid(), 'name': name or tr('Sistema sin nombre'),
              'createdAt': int(time.time() * 1000), 'equipment': []}
         p['kitchens'].append(k)
         self.save()
@@ -211,7 +250,7 @@ class Store:
             return None
         new_kitchen = {
             'id': uid(),
-            'name': f"{k['name']} (copia)" if k.get('name') else '(copia)',
+            'name': tr('{0} (copia)').format(k['name']) if k.get('name') else '(copia)',
             'createdAt': int(time.time() * 1000),
             'equipment': [],
         }
@@ -274,7 +313,7 @@ class Store:
         if not item:
             return None
         copy = {k2: v for k2, v in item.items() if k2 not in ('id', 'createdAt')}
-        copy['model'] = f"{copy['model']} (copia)" if copy.get('model') else '(copia)'
+        copy['model'] = tr('{0} (copia)').format(copy['model']) if copy.get('model') else '(copia)'
         return self.add_equipment(pid, kid, copy)
 
     def update_equipment(self, pid, kid, eid, patch):
@@ -301,7 +340,7 @@ class Store:
         with open(path, 'r', encoding='utf-8') as f:
             incoming = json.load(f)
         if not isinstance(incoming, dict) or 'projects' not in incoming:
-            raise ValueError('El archivo no tiene el formato esperado de un respaldo de Ansul Flow Calculator.')
+            raise ValueError(tr('El archivo no tiene el formato esperado de un respaldo de Ansul Flow Calculator.'))
         self.data = incoming
         for p in self.data['projects']:
             if not systems.is_valid(p.get('system')):

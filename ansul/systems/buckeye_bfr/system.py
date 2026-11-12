@@ -4,18 +4,19 @@ from ..base import SystemDef
 from . import data as D
 from . import engine as E
 from . import category_defs as CD
+from ...i18n import tr
 
 
 class BuckeyeBFR(SystemDef):
     key = 'buckeye_bfr'
-    label = 'Buckeye Kitchen Mister'
-    short = 'Buckeye'
-    flow_label = 'Flow points'
-    report_subtitle = 'Sistema Buckeye Kitchen Mister (BFR) — manual BFR-TM Rev. 6'
+    label = tr('Buckeye Kitchen Mister')
+    short = tr('Buckeye')
+    flow_label = tr('Flow points')
+    report_subtitle = tr('Sistema Buckeye Kitchen Mister (BFR) — manual BFR-TM Rev. 6')
     disclaimer = D.PDF_DISCLAIMER
-    disclaimer_short = ('Esta herramienta es una ayuda de diseño preliminar basada en el manual Buckeye Kitchen '
-                        'Mister (BFR-TM Rev. 6). El diseño final debe ser verificado por un distribuidor/diseñador '
-                        'autorizado Buckeye, conforme a NFPA 17A y los códigos locales aplicables.')
+    disclaimer_short = (tr('Esta herramienta es una ayuda de diseño preliminar basada en el manual Buckeye Kitchen '
+                           'Mister (BFR-TM Rev. 6). El diseño final debe ser verificado por un distribuidor/diseñador '
+                           'autorizado Buckeye, conforme a NFPA 17A y los códigos locales aplicables.'))
 
     supports_cylinder_choice = True
 
@@ -39,7 +40,7 @@ class BuckeyeBFR(SystemDef):
         return CD.diagram_spec(category, values) or ('none',)
 
     def nozzle_columns(self):
-        return ['Boquilla', 'Color', 'No. de parte', 'Cantidad']
+        return [tr('Boquilla'), tr('Color'), tr('No. de parte'), tr('Cantidad')]
 
     def nozzle_row(self, code, qty):
         n = D.NOZZLES.get(code, {})
@@ -52,23 +53,23 @@ class BuckeyeBFR(SystemDef):
         return E.project_summary(project)
 
     def summary_rows(self, s):
-        rows = [('Flow points totales del sistema', E._fmt(s['totalFlow']))]
+        rows = [(tr('Flow points totales del sistema'), E._fmt(s['totalFlow']))]
         chosen = s.get('chosen')
         if chosen:
             for size, n in sorted(s['cylinderCounts'].items(), reverse=True):
                 c = D.CYLINDERS[size]
-                rows.append((f"Cilindro {c['model']} (No. de parte {c['partNo']}, soporte {c['bracket']})", str(n)))
-            rows.append(('Capacidad de los cilindros (flow points)', f"{chosen['capacity']} (sobran {chosen['surplus']})"))
+                rows.append((tr('Cilindro {0} (No. de parte {1}, soporte {2})').format(c['model'], c['partNo'], c['bracket']), str(n)))
+            rows.append((tr('Capacidad de los cilindros (flow points)'), tr('{0} (sobran {1})').format(chosen['capacity'], chosen['surplus'])))
             for size in sorted(s['cylinderCounts'], reverse=True):
                 c = D.CYLINDERS[size]
-                txt = f"{c['maxPipeMl']} mL total, {c['maxPipeBetweenNozzlesMl']} mL entre boquillas, {c['maxElbows']} codos"
+                txt = tr('{0} mL total, {1} mL entre boquillas, {2} codos').format(c['maxPipeMl'], c['maxPipeBetweenNozzlesMl'], c['maxElbows'])
                 if c.get('maxPipe38Ml'):
-                    txt += f" (máx. {c['maxPipe38Ml']} mL en 3/8 in)"
-                rows.append((f"Tubería máx. por {c['model']} (p. 3-13)", txt))
+                    txt += tr(' (máx. {0} mL en 3/8 in)').format(c['maxPipe38Ml'])
+                rows.append((tr('Tubería máx. por {0} (p. 3-13)').format(c['model']), txt))
             if len(s['combos']) > 1:
-                rows.append(('Otras combinaciones válidas', str(len(s['combos']) - 1)))
+                rows.append((tr('Otras combinaciones válidas'), str(len(s['combos']) - 1)))
         else:
-            rows.append(('Cilindros', '—'))
+            rows.append((tr('Cilindros'), '—'))
         return rows
 
     def summary_notes(self, s):
@@ -78,15 +79,15 @@ class BuckeyeBFR(SystemDef):
         return E.combo_label(s['chosen']['cylinders']) if s.get('chosen') else '—'
 
     def project_rows(self, ps):
-        rows = [('Flow points totales del proyecto', E._fmt(ps['totalFlow'])),
-                ('Cilindros totales a instalar', str(ps['totalCylinders']))]
+        rows = [(tr('Flow points totales del proyecto'), E._fmt(ps['totalFlow'])),
+                (tr('Cilindros totales a instalar'), str(ps['totalCylinders']))]
         for size, n in sorted(ps['cylinderCounts'].items(), reverse=True):
             rows.append((f"  {D.CYLINDERS[size]['model']}", str(n)))
         return rows
 
     # Exclusivo de Buckeye: lista de combinaciones para el selector de la UI
     def cylinder_options(self, summary):
-        return [(E.combo_label(c['cylinders']) + f"  —  {c['capacity']} FP (sobran {c['surplus']})", c['cylinders'])
+        return [(E.combo_label(c['cylinders']) + tr('  —  {0} FP (sobran {1})').format(c['capacity'], c['surplus']), c['cylinders'])
                 for c in summary.get('combos') or []]
 
 

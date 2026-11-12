@@ -14,6 +14,7 @@ import math
 from itertools import combinations_with_replacement
 
 from . import data as D
+from ...i18n import tr
 
 EPS = 1e-9
 
@@ -23,13 +24,13 @@ def nozzle_flow(code):
 
 
 def _page(p):
-    return f'{D.MANUAL}, pág. {p}'
+    return tr('{0}, pág. {1}').format(D.MANUAL, p)
 
 
 def _height_txt(opt):
     if opt.get('height'):
         return opt['height']
-    return f"{_fmt(opt['hmin'])} a {_fmt(opt['hmax'])} in"
+    return tr('{0} a {1} in').format(_fmt(opt['hmin']), _fmt(opt['hmax']))
 
 
 def _fmt(n):
@@ -91,9 +92,8 @@ def appliance_result(match, category_label=''):
     n = match['modulesCount']
     detail = match['tag']
     if n > 1:
-        detail += (f" — {n} módulos iguales de {_fmt(match['moduleW'])} × {_fmt(match['moduleD'])} in "
-                   f"({match['cols']} × {match['rows']})")
-    detail += f". Colocación: {match['placement']} ({_page(match['page'])})"
+        detail += (tr(' — {0} módulos iguales de {1} × {2} in ({3} × {4})').format(n, _fmt(match['moduleW']), _fmt(match['moduleD']), match['cols'], match['rows']))
+    detail += tr('. Colocación: {0} ({1})').format(match['placement'], _page(match['page']))
     return {
         'nozzles': [{'code': match['nozzle'], 'qty': n}],
         'flowNumber': match['totalFlow'],
@@ -151,8 +151,8 @@ def calc_wok(diameter):
     return {'ok': True, 'result': {
         'nozzles': [{'code': w['nozzle'], 'qty': 1}],
         'flowNumber': nozzle_flow(w['nozzle']),
-        'heightRange': f"{w['hmin']} a {w['hmax']} in (desde el fondo del wok)",
-        'detail': f"Wok de {_fmt(diameter)} in de diámetro. {w['placement']} ({_page(w['page'])})",
+        'heightRange': tr('{0} a {1} in (desde el fondo del wok)').format(w['hmin'], w['hmax']),
+        'detail': tr('Wok de {0} in de diámetro. {1} ({2})').format(_fmt(diameter), w['placement'], _page(w['page'])),
     }}
 
 
@@ -174,11 +174,11 @@ def calc_duct(side_a=None, side_b=None, diameter=None, is_round=False):
                 return {'ok': True, 'nozzles': [{'code': opt['nozzle'], 'qty': 1}],
                         'flowNumber': nozzle_flow(opt['nozzle']),
                         'heightRange': opt['depth'],
-                        'detail': (f"Ducto redondo Ø{_fmt(diameter)} in (circunferencia {_fmt(circ)} in) — "
-                                   f"{opt['nozzle']} centrada, apuntando al centro del ducto ({_page(opt['page'])})")}
+                        'detail': (tr('Ducto redondo Ø{0} in (circunferencia {1} in) — {2} centrada, apuntando al centro del '
+                                      'ducto ({3})').format(_fmt(diameter), _fmt(circ), opt['nozzle'], _page(opt['page'])))}
         return {'ok': False, 'needsManual': True,
-                'msg': ('Ducto redondo de más de 150 in de circunferencia (47.5 in de diámetro): el manual no da '
-                        'una protección estándar. Consulte al distribuidor Buckeye.')}
+                'msg': (tr('Ducto redondo de más de 150 in de circunferencia (47.5 in de diámetro): el manual no da '
+                           'una protección estándar. Consulte al distribuidor Buckeye.'))}
 
     if not side_a or not side_b or side_a <= 0 or side_b <= 0:
         return {'ok': False}
@@ -188,8 +188,7 @@ def calc_duct(side_a=None, side_b=None, diameter=None, is_round=False):
             return {'ok': True, 'nozzles': [{'code': opt['nozzle'], 'qty': 1}],
                     'flowNumber': nozzle_flow(opt['nozzle']),
                     'heightRange': opt['depth'],
-                    'detail': (f"Ducto {_fmt(side_a)} × {_fmt(side_b)} in (perímetro {_fmt(perimeter)} in) — "
-                               f"{opt['nozzle']} centrada, apuntando al centro del ducto ({_page(opt['page'])})")}
+                    'detail': (tr('Ducto {0} × {1} in (perímetro {2} in) — {3} centrada, apuntando al centro del ducto ({4})').format(_fmt(side_a), _fmt(side_b), _fmt(perimeter), opt['nozzle'], _page(opt['page'])))}
 
     big = D.DUCT_OPTIONS[-1]  # N-2W
     best = None
@@ -203,15 +202,14 @@ def calc_duct(side_a=None, side_b=None, diameter=None, is_round=False):
                     best = (key, ca, cb)
     if not best:
         return {'ok': False, 'needsManual': True,
-                'msg': 'Ducto demasiado grande para dividirlo automáticamente. Consulte al distribuidor Buckeye.'}
+                'msg': tr('Ducto demasiado grande para dividirlo automáticamente. Consulte al distribuidor Buckeye.')}
     _, ca, cb = best
     n = ca * cb
     return {'ok': True, 'nozzles': [{'code': big['nozzle'], 'qty': n}],
             'flowNumber': nozzle_flow(big['nozzle']) * n,
             'heightRange': big['depth'],
-            'detail': (f"Ducto {_fmt(side_a)} × {_fmt(side_b)} in (perímetro {_fmt(perimeter)} in > 150 in) — "
-                       f"{n} boquillas N-2W, una al centro de cada área igual de {_fmt(side_a / ca)} × "
-                       f"{_fmt(side_b / cb)} in ({ca} × {cb}), apuntando dentro del ducto ({_page('3-2')})")}
+            'detail': (tr('Ducto {0} × {1} in (perímetro {2} in > 150 in) — {3} boquillas N-2W, una al centro de '
+                          'cada área igual de {4} × {5} in ({6} × {7}), apuntando dentro del ducto ({8})').format(_fmt(side_a), _fmt(side_b), _fmt(perimeter), n, _fmt(side_a / ca), _fmt(side_b / cb), ca, cb, _page('3-2')))}
 
 
 def scale(result, qty, noun):
@@ -236,12 +234,12 @@ def calc_plenum(kind, length_ft, width_ft=None):
         return {'ok': False, 'widthExceeded': True}
     n = max(1, math.ceil(length_ft / p['maxLengthFt'] - EPS))
     zone = length_ft / n
-    detail = f"Pleno {k['label'].lower()} — {n} boquilla{'s' if n > 1 else ''} N-1HP"
+    detail = tr('Pleno {0} — {1} boquilla{2} N-1HP').format(k['label'].lower(), n, 's' if n > 1 else '')
     if n > 1:
-        detail += f", tramos iguales de {_fmt(zone)} ft"
-    detail += f". Colocación: {k['placement']} ({_page(p['page'])})"
+        detail += tr(', tramos iguales de {0} ft').format(_fmt(zone))
+    detail += tr('. Colocación: {0} ({1})').format(k['placement'], _page(p['page']))
     return {'ok': True, 'nozzles': [{'code': p['nozzle'], 'qty': n}],
-            'flowNumber': nozzle_flow(p['nozzle']) * n, 'heightRange': '1/3 de la altura (ver detalle)',
+            'flowNumber': nozzle_flow(p['nozzle']) * n, 'heightRange': tr('1/3 de la altura (ver detalle)'),
             'detail': detail}
 
 
@@ -318,24 +316,23 @@ def kitchen_summary(kitchen):
     notes = []
     chosen = None
     if combos is None:
-        notes.append('El sistema excede 300 flow points: divídalo en varios sistemas.')
+        notes.append(tr('El sistema excede 300 flow points: divídalo en varios sistemas.'))
         combos = []
     saved = kitchen.get('cylinderChoice')
     if combos:
         if saved:
             chosen = next((c for c in combos if sorted(c['cylinders']) == sorted(saved)), None)
             if chosen is None:
-                notes.append(f"La combinación de cilindros guardada ({combo_label(saved)}) ya no es válida con "
-                             'los riesgos actuales; se usa la primera opción de la lista. Elija otra si lo desea.')
+                notes.append(tr('La combinación de cilindros guardada ({0}) ya no es válida con los riesgos actuales; se '
+                                'usa la primera opción de la lista. Elija otra si lo desea.').format(combo_label(saved)))
         if chosen is None:
             chosen = combos[0]
 
     needs_min = bool(categories & set(D.MIN_PIPING_CATEGORIES))
     if needs_min and 0 < total_flow < D.MIN_SYSTEM_FLOW_POINTS:
-        notes.append(f'ADVERTENCIA: el sistema tiene {total_flow} flow point(s); el mínimo es '
-                     f'{D.MIN_SYSTEM_FLOW_POINTS} (p. 3-13).')
+        notes.append(tr('ADVERTENCIA: el sistema tiene {0} flow point(s); el mínimo es {1} (p. 3-13).').format(total_flow, D.MIN_SYSTEM_FLOW_POINTS))
     if needs_min and total_flow > 0:
-        notes.append('Requisitos mínimos de tubería (protege wok, freidora o estufa, p. 3-13): '
+        notes.append(tr('Requisitos mínimos de tubería (protege wok, freidora o estufa, p. 3-13): ')
                      + ' '.join(D.MIN_PIPING_NOTES[:3]))
 
     cyl_counts = {}

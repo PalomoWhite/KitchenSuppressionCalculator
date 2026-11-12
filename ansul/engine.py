@@ -13,6 +13,7 @@ import math
 
 from . import data as D
 from .model_catalog import MODEL_CATALOG
+from .i18n import tr
 
 # --------------------------- Utilidades numéricas --------------------------
 
@@ -250,13 +251,13 @@ def fryer_result_for_choice(fryer_calc, chosen_index):
         return None
     m = matches[chosen_index]
     qty = m.get('modulesCount', fryer_calc['modules'])
-    detail = f"{m['tag']} — grupo {m['group']}"
+    detail = tr('{0} — grupo {1}').format(m['tag'], m['group'])
     if qty > 1:
-        detail += f" — modularizado en {qty} zonas"
+        detail += tr(' — modularizado en {0} zonas').format(qty)
     return {
         'nozzles': [{'code': m['nozzle'], 'qty': qty}],
         'flowNumber': m['flowPerNozzle'] * qty,
-        'heightRange': f"{m['hmin']} in a {m['hmax']} in",
+        'heightRange': tr('{0} in a {1} in').format(m['hmin'], m['hmax']),
         'detail': detail,
     }
 
@@ -292,11 +293,11 @@ def long_side_area_result_for_choice(calc, chosen_idx):
     total_qty = m['qty'] * n
     detail = m['tag']
     if n > 1:
-        detail += f" — modularizado en {n} zonas"
+        detail += tr(' — modularizado en {0} zonas').format(n)
     return {
         'nozzles': [{'code': m['nozzle'], 'qty': total_qty}],
         'flowNumber': nozzle_flow(m['nozzle']) * total_qty,
-        'heightRange': f"{m['hmin']} in a {m['hmax']} in",
+        'heightRange': tr('{0} in a {1} in').format(m['hmin'], m['hmax']),
         'detail': detail,
     }
 
@@ -340,11 +341,11 @@ def grill_result_for_choice(calc, chosen_idx):
     total_qty = m['qty'] * n
     detail = f"{m['tag']} ({D.FUEL_LABELS.get(calc['fuel'], calc['fuel'])})"
     if n > 1:
-        detail += f" — modularizado en {n} zonas"
+        detail += tr(' — modularizado en {0} zonas').format(n)
     return {
         'nozzles': [{'code': m['nozzle'], 'qty': total_qty}],
         'flowNumber': nozzle_flow(m['nozzle']) * total_qty,
-        'heightRange': f"{m['hmin']} in a {m['hmax']} in",
+        'heightRange': tr('{0} in a {1} in').format(m['hmin'], m['hmax']),
         'detail': detail,
     }
 
@@ -366,8 +367,8 @@ def wok_result(opt):
     return {
         'nozzles': [{'code': opt['nozzle'], 'qty': opt['qty']}],
         'flowNumber': nozzle_flow(opt['nozzle']) * opt['qty'],
-        'heightRange': f"{opt['hmin']} in a {opt['hmax']} in",
-        'detail': f"Wok {opt['nozzle']}",
+        'heightRange': tr('{0} in a {1} in').format(opt['hmin'], opt['hmax']),
+        'detail': tr('Wok {0}').format(opt['nozzle']),
     }
 
 
@@ -381,14 +382,14 @@ def calc_chain_broiler(kind, length, width, opening_l=None, opening_w=None):
         min_l = length * opt['minOpeningRatio']
         min_w = width * opt['minOpeningRatio']
         if opening_l < max(min_l, opt['minOpening']) or opening_w < max(min_w, opt['minOpening']):
-            ratio_warning = ('La abertura no cumple el mínimo de 60% de las dimensiones internas '
-                              '(o 12x12 in mínimo). Verifique protección horizontal en su lugar.')
+            ratio_warning = (tr('La abertura no cumple el mínimo de 60% de las dimensiones internas (o 12x12 in mínimo). '
+                                'Verifique protección horizontal en su lugar.'))
     result = None
     if fits:
         result = {
             'nozzles': [{'code': opt['nozzle'], 'qty': opt['qty']}],
             'flowNumber': nozzle_flow(opt['nozzle']) * opt['qty'],
-            'heightRange': f"{opt['hmin']} in a {opt['hmax']} in",
+            'heightRange': tr('{0} in a {1} in').format(opt['hmin'], opt['hmax']),
             'detail': opt['label'],
         }
     return {'ok': fits, 'opt': opt, 'ratioWarning': ratio_warning, 'result': result}
@@ -440,20 +441,20 @@ def calc_duct(perimeter, diameter, is_round, qty):
     d = D.DUCT_OPTIONS
     if is_round:
         if diameter <= d['single1W']['maxDiameter']:
-            base = _duct_res([{'code': '1W', 'qty': 1}], 'Ducto redondo — 1W (una boquilla)')
+            base = _duct_res([{'code': '1W', 'qty': 1}], tr('Ducto redondo — 1W (una boquilla)'))
         elif diameter <= d['single2W']['maxDiameter']:
-            base = _duct_res([{'code': '2W', 'qty': 1}], 'Ducto redondo — 2W (una boquilla)')
+            base = _duct_res([{'code': '2W', 'qty': 1}], tr('Ducto redondo — 2W (una boquilla)'))
         else:
             return {'ok': False, 'needsManual': True,
-                    'msg': ('Ducto redondo mayor a 32 in de diámetro: no hay opción redonda estándar, '
-                            'requiere diseño especial (consulte a ANSUL).')}
+                    'msg': (tr('Ducto redondo mayor a 32 in de diámetro: no hay opción redonda estándar, requiere diseño '
+                               'especial (consulte a ANSUL).'))}
     elif perimeter <= d['single1W']['maxPerimeter']:
-        base = _duct_res([{'code': '1W', 'qty': 1}], 'Ducto — boquilla única 1W')
+        base = _duct_res([{'code': '1W', 'qty': 1}], tr('Ducto — boquilla única 1W'))
     elif perimeter <= d['single2W']['maxPerimeter']:
-        base = _duct_res([{'code': '2W', 'qty': 1}], 'Ducto — boquilla única 2W')
+        base = _duct_res([{'code': '2W', 'qty': 1}], tr('Ducto — boquilla única 2W'))
     elif perimeter <= d['dual']['maxPerimeter']:
         base = _duct_res([{'code': '1W', 'qty': 1}, {'code': '2W', 'qty': 1}],
-                          'Ducto — opción de tres flujos (1W + 2W)')
+                          tr('Ducto — opción de tres flujos (1W + 2W)'))
     else:
         # > 135 in perímetro: aproximación conservadora usando módulos 2W
         # (~35 in de lado B por módulo), redondeado a número par (mitad
@@ -464,9 +465,9 @@ def calc_duct(perimeter, diameter, is_round, qty):
             'ok': True, 'estimated': True,
             'nozzles': [{'code': '2W', 'qty': nozzles_n}],
             'flowNumber': nozzle_flow('2W') * nozzles_n,
-            'detail': (f'Ducto grande (perímetro > 135 in) — ESTIMACIÓN conservadora de {nozzles_n} boquillas '
-                       '2W por ducto. Verifique manualmente contra las Gráficas 4-1/4-2 del manual R-102 o '
-                       'consulte a ANSUL antes de instalar.'),
+            'detail': (tr('Ducto grande (perímetro > 135 in) — ESTIMACIÓN conservadora de {0} boquillas 2W por '
+                          'ducto. Verifique manualmente contra las Gráficas 4-1/4-2 del manual R-102 o consulte a '
+                          'ANSUL antes de instalar.').format(nozzles_n)),
         }
     return scale_result_by_qty(base, qty, 'ducto')
 
@@ -482,7 +483,7 @@ def calc_plenum(kind, length_ft, plenum_qty):
         'ok': True,
         'nozzles': [{'code': opt['nozzle'], 'qty': qty}],
         'flowNumber': nozzle_flow(opt['nozzle']) * qty,
-        'detail': f"{opt['label']} — {length_ft} ft",
+        'detail': tr('{0} — {1} ft').format(opt['label'], length_ft),
     }
     return scale_result_by_qty(base, plenum_qty, 'pleno')
 
@@ -494,7 +495,7 @@ def calc_precipitator(cells):
     return {
         'nozzles': [{'code': '1/2N', 'qty': qty}],
         'flowNumber': nozzle_flow('1/2N') * qty,
-        'detail': f'Precipitador electrostático — 1/2N por celda ({qty} celdas)',
+        'detail': tr('Precipitador electrostático — 1/2N por celda ({0} celdas)').format(qty),
     }
 
 
@@ -520,20 +521,21 @@ def select_tanks(total_flow):
             tanks = [3] * (n - 1) + [1.5]
             return {
                 'tankCount': n, 'tanks': tanks, 'totalGallons': 3 * (n - 1) + 1.5,
-                'n2': D.N2_DOUBLE if n == 2 else 'Ver nota',
-                'co2': D.CO2_101_30 if n == 2 else 'Ver nota',
+                'n2': D.N2_DOUBLE if n == 2 else tr('Ver nota'),
+                'co2': D.CO2_101_30 if n == 2 else tr('Ver nota'),
                 'note': D.MULTI_CARTRIDGE_NOTE if n >= 3 else None,
             }
         if total_flow <= cap_b:
             tanks = [3] * n
             return {
                 'tankCount': n, 'tanks': tanks, 'totalGallons': 3 * n,
-                'n2': D.N2_DOUBLE if n == 2 else 'Ver nota',
-                'co2': D.CO2_101_30 if n == 2 else 'Ver nota',
+                'n2': D.N2_DOUBLE if n == 2 else tr('Ver nota'),
+                'co2': D.CO2_101_30 if n == 2 else tr('Ver nota'),
                 'note': D.MULTI_CARTRIDGE_NOTE if n >= 3 else None,
             }
     return {'tankCount': None, 'tanks': [], 'totalGallons': None,
-            'note': 'Flow number excede el máximo tabulado (>220). Requiere diseño especializado — consulte a ANSUL.'}
+            'note': tr('Flow number excede el máximo tabulado (>220). Requiere diseño especializado — consulte a '
+                       'ANSUL.')}
 
 
 def tank_counts(tanks):
@@ -564,22 +566,22 @@ def tanks_from_manual(tank_list, total_flow=None):
         elif abs(size - 3) < 1e-6:
             n2, co2 = D.N2_LT30R, D.CO2_101_20
         else:
-            n2, co2 = 'Ver nota', 'Ver nota'
+            n2, co2 = tr('Ver nota'), tr('Ver nota')
         note = None
     elif n == 2:
         n2, co2 = D.N2_DOUBLE, D.CO2_101_30
         note = None
     else:
-        n2, co2 = 'Ver nota', 'Ver nota'
+        n2, co2 = tr('Ver nota'), tr('Ver nota')
         note = D.MULTI_CARTRIDGE_NOTE
 
     result = {'tankCount': n, 'tanks': tanks, 'totalGallons': total_gallons,
               'n2': n2, 'co2': co2, 'note': note, 'manual': True, 'capacity': capacity}
 
     if total_flow is not None and total_flow > 0 and total_flow > capacity + 1e-9:
-        warning = (f'ADVERTENCIA: la selección manual de tanques (capacidad {fmt_num(capacity)} flow numbers) '
-                   f'es INSUFICIENTE para el flow number total calculado de este sistema ({fmt_num(total_flow)}). '
-                   'Agregue más tanques o tanques de mayor tamaño antes de instalar.')
+        warning = (tr('ADVERTENCIA: la selección manual de tanques (capacidad {0} flow numbers) es INSUFICIENTE '
+                      'para el flow number total calculado de este sistema ({1}). Agregue más tanques o tanques '
+                      'de mayor tamaño antes de instalar.').format(fmt_num(capacity), fmt_num(total_flow)))
         result['note'] = (note + ' ' if note else '') + warning
         result['insufficientCapacity'] = True
 
@@ -599,12 +601,12 @@ def catalog_entry_to_result(entry):
         return None
     hmin, hmax = entry.get('hmin'), entry.get('hmax')
     if hmin is not None and hmax is not None:
-        height_range = f'{hmin} a {hmax} in'
+        height_range = tr('{0} a {1} in').format(hmin, hmax)
     elif hmin is not None:
-        height_range = f'{hmin} in'
+        height_range = tr('{0} in').format(hmin)
     else:
         height_range = '—'
-    source_txt = 'Datos de catálogo (agregado por ti)' if entry.get('source') == 'user' else 'Datos de catálogo'
+    source_txt = tr('Datos de catálogo (agregado por ti)') if entry.get('source') == 'user' else tr('Datos de catálogo')
     notes = entry.get('notes') or ''
     return {
         'nozzles': entry['nozzles'],

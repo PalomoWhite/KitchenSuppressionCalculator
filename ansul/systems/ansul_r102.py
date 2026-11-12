@@ -8,18 +8,19 @@ from .. import data as D
 from .. import engine as E
 from .. import category_defs as CD
 from .base import SystemDef
+from ..i18n import tr
 
 
 class AnsulR102(SystemDef):
     key = 'ansul_r102'
     label = 'ANSUL R-102'
     short = 'ANSUL'
-    flow_label = 'Flow number'
-    report_subtitle = 'Sistema ANSUL(R) R-102'
+    flow_label = tr('Flow number')
+    report_subtitle = tr('Sistema ANSUL(R) R-102')
     disclaimer = D.PDF_DISCLAIMER
-    disclaimer_short = ('Esta herramienta es una ayuda de diseño preliminar basada en el manual ANSUL(R) R-102. '
-                        'El diseño final debe ser verificado y sellado por un diseñador certificado ANSUL R-102, '
-                        'conforme a NFPA 17A y los códigos locales aplicables.')
+    disclaimer_short = (tr('Esta herramienta es una ayuda de diseño preliminar basada en el manual ANSUL(R) R-102. El '
+                           'diseño final debe ser verificado y sellado por un diseñador certificado ANSUL R-102, '
+                           'conforme a NFPA 17A y los códigos locales aplicables.'))
 
     supports_catalog = True
     supports_tank_override = True
@@ -50,17 +51,17 @@ class AnsulR102(SystemDef):
         return E.project_summary(project)
 
     def summary_rows(self, summary):
-        rows = [('Capacidad total de flujo del sistema (flow number)', E.fmt_num(summary['totalFlow']))]
+        rows = [(tr('Capacidad total de flujo del sistema (flow number)'), E.fmt_num(summary['totalFlow']))]
         tanks = summary['tanks']
         if tanks.get('manual'):
-            rows.append(('Selección de tanques', 'Manual (elegida por el usuario)'))
+            rows.append((tr('Selección de tanques'), tr('Manual (elegida por el usuario)')))
         if tanks.get('tankCount'):
             counts = E.tank_counts(tanks['tanks'])
             for g in sorted(counts.keys(), reverse=True):
-                rows.append((f'Tanque de {g} gal', str(counts[g])))
-        rows.append(('Galonaje total de agente', f"{E.fmt_num(tanks.get('totalGallons'))} gal"))
-        rows.append(('Cartucho — opción nitrógeno (N2)', tanks.get('n2') or '—'))
-        rows.append(('Cartucho — opción CO2 (alternativa al N2, no ambos)', tanks.get('co2') or '—'))
+                rows.append((tr('Tanque de {0} gal').format(g), str(counts[g])))
+        rows.append((tr('Galonaje total de agente'), tr('{0} gal').format(E.fmt_num(tanks.get('totalGallons')))))
+        rows.append((tr('Cartucho — opción nitrógeno (N2)'), tanks.get('n2') or '—'))
+        rows.append((tr('Cartucho — opción CO2 (alternativa al N2, no ambos)'), tanks.get('co2') or '—'))
         return rows
 
     def summary_notes(self, summary):
@@ -69,13 +70,13 @@ class AnsulR102(SystemDef):
 
     def containers_short(self, summary):
         t = summary['tanks']
-        return f"{t['tankCount']} ({E.fmt_num(t['totalGallons'])} gal)" if t.get('tankCount') else '—'
+        return tr('{0} ({1} gal)').format(t['tankCount'], E.fmt_num(t['totalGallons'])) if t.get('tankCount') else '—'
 
     def project_rows(self, ps):
         return [
-            ('Capacidad total de flujo del proyecto (flow number)', E.fmt_num(ps['totalFlow'])),
-            ('Tanques totales a instalar', str(ps['totalTanks'])),
-            ('Galonaje total de agente', f"{E.fmt_num(ps['totalGallons'])} gal"),
+            (tr('Capacidad total de flujo del proyecto (flow number)'), E.fmt_num(ps['totalFlow'])),
+            (tr('Tanques totales a instalar'), str(ps['totalTanks'])),
+            (tr('Galonaje total de agente'), tr('{0} gal').format(E.fmt_num(ps['totalGallons']))),
         ]
 
 

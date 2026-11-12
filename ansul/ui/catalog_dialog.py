@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QFormLayout, Q
 
 from .. import data as D
 from .. import engine as E
+from ..i18n import tr
 
 
 def _entry_summary(entry):
@@ -22,9 +23,9 @@ def _entry_summary(entry):
     if nozz:
         nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in nozz)
     else:
-        nozz_txt = 'Sin boquilla fija (ver notas)'
+        nozz_txt = tr('Sin boquilla fija (ver notas)')
     fuel = f" · {D.FUEL_LABELS.get(entry['fuel'], entry['fuel'])}" if entry.get('fuel') else ''
-    tag = ' [tu catálogo]' if entry.get('source') == 'user' else ''
+    tag = tr(' [tu catálogo]') if entry.get('source') == 'user' else ''
     return f"{entry.get('brand','')} — {entry.get('model','')}{tag}\n{nozz_txt}{fuel}"
 
 
@@ -33,12 +34,12 @@ class CatalogPickerDialog(QDialog):
         super().__init__(parent)
         self.category = category
         self.selected_entry = None
-        self.setWindowTitle(f'Catálogo de modelos — {D.CATEGORY_LABELS.get(category, category)}')
+        self.setWindowTitle(tr('Catálogo de modelos — {0}').format(D.CATEGORY_LABELS.get(category, category)))
         self.setMinimumSize(560, 420)
 
         layout = QVBoxLayout(self)
         self.search_edit = QLineEdit()
-        self.search_edit.setPlaceholderText('Buscar por marca o modelo…')
+        self.search_edit.setPlaceholderText(tr('Buscar por marca o modelo…'))
         self.search_edit.textChanged.connect(self._refresh_list)
         layout.addWidget(self.search_edit)
 
@@ -55,9 +56,9 @@ class CatalogPickerDialog(QDialog):
         layout.addWidget(buttons)
 
         if not self.entries:
-            info = QLabel('No hay fichas de catálogo para esta categoría todavía. '
-                           'Puede continuar capturando las medidas manualmente, o agregar una ficha propia '
-                           'desde el menú Catálogo > Administrar mi catálogo.')
+            info = QLabel(tr('No hay fichas de catálogo para esta categoría todavía. Puede continuar capturando las '
+                             'medidas manualmente, o agregar una ficha propia desde el menú Catálogo > Administrar mi '
+                             'catálogo.'))
             info.setWordWrap(True)
             layout.addWidget(info)
 
@@ -89,14 +90,14 @@ class NozzleRowsEditor(QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         self.table = QTableWidget(0, 2)
-        self.table.setHorizontalHeaderLabels(['Boquilla', 'Cantidad'])
+        self.table.setHorizontalHeaderLabels([tr('Boquilla'), tr('Cantidad')])
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         layout.addWidget(self.table)
 
         btn_row = QHBoxLayout()
-        add_btn = QPushButton('+ Agregar boquilla')
+        add_btn = QPushButton(tr('+ Agregar boquilla'))
         add_btn.clicked.connect(lambda: self._add_row())
-        rm_btn = QPushButton('Quitar seleccionada')
+        rm_btn = QPushButton(tr('Quitar seleccionada'))
         rm_btn.clicked.connect(self._remove_selected)
         btn_row.addWidget(add_btn)
         btn_row.addWidget(rm_btn)
@@ -144,7 +145,7 @@ class CatalogEntryEditDialog(QDialog):
     def __init__(self, entry=None, parent=None):
         super().__init__(parent)
         self.entry = dict(entry) if entry else {}
-        self.setWindowTitle('Editar ficha de catálogo' if entry else 'Nueva ficha de catálogo')
+        self.setWindowTitle(tr('Editar ficha de catálogo') if entry else tr('Nueva ficha de catálogo'))
         self.setMinimumWidth(480)
 
         layout = QVBoxLayout(self)
@@ -156,22 +157,22 @@ class CatalogEntryEditDialog(QDialog):
         if self.entry.get('category'):
             idx = D.CATEGORY_ORDER.index(self.entry['category']) if self.entry['category'] in D.CATEGORY_ORDER else 0
             self.category_combo.setCurrentIndex(idx)
-        form.addRow('Categoría', self.category_combo)
+        form.addRow(tr('Categoría'), self.category_combo)
 
         self.brand_edit = QLineEdit(self.entry.get('brand', ''))
         self.model_edit = QLineEdit(self.entry.get('model', ''))
-        form.addRow('Marca', self.brand_edit)
-        form.addRow('Modelo', self.model_edit)
+        form.addRow(tr('Marca'), self.brand_edit)
+        form.addRow(tr('Modelo'), self.model_edit)
 
         self.fuel_combo = QComboBox()
-        self.fuel_combo.addItem('(sin especificar)', None)
+        self.fuel_combo.addItem(tr('(sin especificar)'), None)
         for k, v in D.FUEL_LABELS.items():
             self.fuel_combo.addItem(v, k)
         if self.entry.get('fuel'):
             idx = self.fuel_combo.findData(self.entry['fuel'])
             if idx >= 0:
                 self.fuel_combo.setCurrentIndex(idx)
-        form.addRow('Combustible', self.fuel_combo)
+        form.addRow(tr('Combustible'), self.fuel_combo)
 
         self.hmin_edit = QLineEdit('' if self.entry.get('hmin') is None else str(self.entry['hmin']))
         self.hmax_edit = QLineEdit('' if self.entry.get('hmax') is None else str(self.entry['hmax']))
@@ -179,7 +180,7 @@ class CatalogEntryEditDialog(QDialog):
         h_row.addWidget(self.hmin_edit)
         h_row.addWidget(QLabel('a'))
         h_row.addWidget(self.hmax_edit)
-        form.addRow('Altura de boquilla (in), min/max', h_row)
+        form.addRow(tr('Altura de boquilla (in), min/max'), h_row)
 
         self.surfw_edit = QLineEdit('' if self.entry.get('surfaceW') is None else str(self.entry['surfaceW']))
         self.surfd_edit = QLineEdit('' if self.entry.get('surfaceD') is None else str(self.entry['surfaceD']))
@@ -187,15 +188,15 @@ class CatalogEntryEditDialog(QDialog):
         s_row.addWidget(self.surfw_edit)
         s_row.addWidget(QLabel('x'))
         s_row.addWidget(self.surfd_edit)
-        form.addRow('Superficie (ancho x fondo, in) — opcional', s_row)
+        form.addRow(tr('Superficie (ancho x fondo, in) — opcional'), s_row)
 
         layout.addLayout(form)
 
-        layout.addWidget(QLabel('Boquillas (deje vacío si el manual no especifica una cantidad fija):'))
+        layout.addWidget(QLabel(tr('Boquillas (deje vacío si el manual no especifica una cantidad fija):')))
         self.nozzle_editor = NozzleRowsEditor(self.entry.get('nozzles'))
         layout.addWidget(self.nozzle_editor)
 
-        layout.addWidget(QLabel('Notas / ubicación de montaje:'))
+        layout.addWidget(QLabel(tr('Notas / ubicación de montaje:')))
         self.notes_edit = QTextEdit(self.entry.get('notes', ''))
         self.notes_edit.setMaximumHeight(80)
         layout.addWidget(self.notes_edit)
@@ -218,7 +219,7 @@ class CatalogEntryEditDialog(QDialog):
         brand = self.brand_edit.text().strip()
         model = self.model_edit.text().strip()
         if not brand or not model:
-            QMessageBox.warning(self, 'Datos incompletos', 'Indique al menos marca y modelo.')
+            QMessageBox.warning(self, tr('Datos incompletos'), tr('Indique al menos marca y modelo.'))
             return
         self.entry.update({
             'category': self.category_combo.currentData(),
@@ -241,12 +242,12 @@ class CatalogManagerDialog(QDialog):
     def __init__(self, store, parent=None):
         super().__init__(parent)
         self.store = store
-        self.setWindowTitle('Mi catálogo de equipos')
+        self.setWindowTitle(tr('Mi catálogo de equipos'))
         self.setMinimumSize(560, 420)
 
         layout = QVBoxLayout(self)
-        info = QLabel('Fichas de equipos que has agregado (además de las 65 que ya vienen del manual R-102). '
-                       'Se guardan junto con tus proyectos y se incluyen en el respaldo/restauración.')
+        info = QLabel(tr('Fichas de equipos que has agregado (además de las 65 que ya vienen del manual R-102). Se '
+                         'guardan junto con tus proyectos y se incluyen en el respaldo/restauración.'))
         info.setWordWrap(True)
         layout.addWidget(info)
 
@@ -254,11 +255,11 @@ class CatalogManagerDialog(QDialog):
         layout.addWidget(self.list_widget)
 
         btn_row = QHBoxLayout()
-        add_btn = QPushButton('Agregar ficha…')
+        add_btn = QPushButton(tr('Agregar ficha…'))
         add_btn.clicked.connect(self._add_entry)
-        edit_btn = QPushButton('Editar…')
+        edit_btn = QPushButton(tr('Editar…'))
         edit_btn.clicked.connect(self._edit_entry)
-        del_btn = QPushButton('Eliminar')
+        del_btn = QPushButton(tr('Eliminar'))
         del_btn.clicked.connect(self._delete_entry)
         btn_row.addWidget(add_btn)
         btn_row.addWidget(edit_btn)
@@ -304,6 +305,6 @@ class CatalogManagerDialog(QDialog):
         if not item:
             return
         entry_id = item.data(Qt.UserRole)
-        if QMessageBox.question(self, 'Confirmar', '¿Eliminar esta ficha de tu catálogo?') == QMessageBox.Yes:
+        if QMessageBox.question(self, tr('Confirmar'), tr('¿Eliminar esta ficha de tu catálogo?')) == QMessageBox.Yes:
             self.store.delete_catalog_entry(entry_id)
             self._refresh()

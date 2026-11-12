@@ -9,18 +9,19 @@ from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QFormLayout, QLineEdit, QLabel, QDialogButtonBox
 
 from .. import engine as E
+from ..i18n import tr
 
 
 class UnitConverterDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('Convertidor de unidades — pies / metros')
+        self.setWindowTitle(tr('Convertidor de unidades — pies / metros'))
         self.setMinimumWidth(340)
         self._updating = False
 
         outer = QVBoxLayout(self)
-        outer.addWidget(QLabel('Escriba un valor en cualquiera de los dos campos; el otro se '
-                                'actualiza automáticamente (1 m = 3.28084 ft).'))
+        outer.addWidget(QLabel(tr('Escriba un valor en cualquiera de los dos campos; el otro se actualiza automáticamente (1 '
+                                  'm = 3.28084 ft).')))
 
         form = QFormLayout()
         validator = QDoubleValidator(-1e9, 1e9, 6)
@@ -29,12 +30,12 @@ class UnitConverterDialog(QDialog):
         self.ft_edit = QLineEdit()
         self.ft_edit.setValidator(validator)
         self.ft_edit.setPlaceholderText('0')
-        form.addRow('Pies (ft):', self.ft_edit)
+        form.addRow(tr('Pies (ft):'), self.ft_edit)
 
         self.m_edit = QLineEdit()
         self.m_edit.setValidator(validator)
         self.m_edit.setPlaceholderText('0')
-        form.addRow('Metros (m):', self.m_edit)
+        form.addRow(tr('Metros (m):'), self.m_edit)
 
         outer.addLayout(form)
 
