@@ -13,7 +13,7 @@
 ; Cambia MyAppVersion cuando publiques una nueva versión.
 
 #define MyAppName "Kitchen Suppression Calculator"
-#define MyAppVersion "1.3.1"
+#define MyAppVersion "1.3.2"
 #define MyAppPublisher "Miguel Alejandro Gutiérrez Torres"
 #define MyAppExeName "KitchenSuppressionCalculator.exe"
 ; Ruta a la carpeta que generó PyInstaller (relativa a este .iss)
@@ -27,6 +27,9 @@ AppPublisher={#MyAppPublisher}
 DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
+; Usar siempre el nombre actual del programa para la carpeta del menú Inicio
+; (sin esto, al actualizar se reutilizaba la de "Ansul Flow Calculator").
+UsePreviousGroup=no
 OutputDir=output
 OutputBaseFilename=KitchenSuppressionCalculator_Setup
 Compression=lzma2
@@ -44,6 +47,17 @@ Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "Crear un acceso directo en el Escritorio"; GroupDescription: "Accesos directos:"
+
+[InstallDelete]
+; Limpieza al actualizar desde versiones anteriores a la 1.3.0, cuando el
+; programa se llamaba "Ansul Flow Calculator": se borran el .exe viejo y sus
+; accesos directos, que seguían en el Escritorio sin el logotipo nuevo.
+Type: files; Name: "{app}\AnsulFlowCalculator.exe"
+Type: files; Name: "{autodesktop}\Ansul Flow Calculator.lnk"
+Type: filesandordirs; Name: "{autoprograms}\Ansul Flow Calculator"
+; Dependencias de la versión anterior: se reemplazan completas para no dejar
+; bibliotecas viejas mezcladas con las nuevas.
+Type: filesandordirs; Name: "{app}\_internal"
 
 [Files]
 ; Copia TODO el contenido de la carpeta generada por PyInstaller (el .exe
