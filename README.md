@@ -10,8 +10,27 @@ incendios en cocinas comerciales (ANSUL R-102 y Buckeye Kitchen Mister).
 Autor / Author: **Miguel Alejandro Gutiérrez Torres** · Licencia / License:
 [GNU GPL v3.0](LICENSE)
 
-**Descargas / Downloads:** Windows, macOS (Apple Silicon) y Linux en la
-sección [Releases](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases).
+## ⬇️ Descargas / Downloads
+
+| Sistema / System | Archivo / File |
+|---|---|
+| **Windows** | [KitchenSuppressionCalculator_Windows_Setup.exe](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases/latest/download/KitchenSuppressionCalculator_Windows_Setup.exe) |
+| **macOS** (Apple Silicon M1–M4) | [KitchenSuppressionCalculator_macOS_AppleSilicon.dmg](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases/latest/download/KitchenSuppressionCalculator_macOS_AppleSilicon.dmg) |
+| **Linux** (x64) | [KitchenSuppressionCalculator_Linux_x64.tar.gz](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases/latest/download/KitchenSuppressionCalculator_Linux_x64.tar.gz) |
+
+Los enlaces siempre descargan la versión más reciente; las anteriores están en
+[Releases](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases).
+*The links always download the latest version; older ones are in Releases.*
+
+> **Primera vez / First run:** el programa no está firmado digitalmente.
+> En **Windows**, si aparece "Windows protegió su PC": *Más información →
+> Ejecutar de todas formas*. En **macOS**: clic derecho sobre la app →
+> *Abrir*. En **Linux**: descomprimir y ejecutar
+> `KitchenSuppressionCalculator/KitchenSuppressionCalculator` (algunas
+> distribuciones necesitan `sudo apt install libxcb-cursor0`).
+> *The program is not digitally signed. On Windows: "More info → Run anyway".
+> On macOS: right-click the app → Open. On Linux: extract and run the
+> executable (some distributions need `libxcb-cursor0`).*
 
 ---
 
@@ -296,8 +315,7 @@ QT_QPA_PLATFORM=offscreen python tests/_smoke_buckeye.py
 
 ### Autor y licencia
 
-Autor: **Miguel Alejandro Gutiérrez Torres** (proyecto personal, hecho por
-su cuenta y con recursos propios).
+Autor: **Miguel Alejandro Gutiérrez Torres** (proyecto personal).
 
 Este programa es software libre y gratuito, publicado bajo la licencia
 **GNU GPL v3.0** (ver [`LICENSE`](LICENSE)): cualquiera puede descargarlo,
@@ -573,8 +591,7 @@ QT_QPA_PLATFORM=offscreen python tests/_smoke_buckeye.py
 
 ### Author and license
 
-Author: **Miguel Alejandro Gutiérrez Torres** (personal project, developed
-independently with his own resources).
+Author: **Miguel Alejandro Gutiérrez Torres** (personal project).
 
 This program is free software, free of charge, released under the
 **GNU GPL v3.0** license (see [`LICENSE`](LICENSE)): anyone can download,
