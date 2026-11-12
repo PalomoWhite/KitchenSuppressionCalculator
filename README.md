@@ -45,6 +45,18 @@ pip install -r requirements.txt
 python main.py
 ```
 
+## Idioma y tema
+
+En **Configuración → Idioma y tema…** se elige el idioma (Español / English) y
+el tema (Claro / Oscuro). El tema se aplica al momento; el idioma, al
+reiniciar el programa (el diálogo ofrece reiniciar). Los resultados ya
+calculados se traducen solos al abrir el proyecto, sin cambiar boquillas ni
+flow numbers, y los reportes PDF salen en el idioma activo. La preferencia se
+guarda en `settings.json`, junto al archivo de proyectos.
+
+Para probar en otro idioma sin cambiar la configuración:
+`ANSULCALC_LANG=en python main.py`.
+
 ## Qué hace
 
 - **Proyectos → Sistemas → Riesgos**: organiza el trabajo igual que la
@@ -161,6 +173,9 @@ ansul/
   category_defs.py           Definición de campos de captura por categoría
   store.py                   Persistencia local en JSON (proyectos/sistemas/riesgos)
   report.py                  Generación de reportes PDF (reportlab)
+  settings.py                Configuración (idioma y tema) en settings.json
+  i18n.py                    tr(): traduce los textos de la interfaz
+  i18n_en.py                 Catálogo de traducciones al inglés
   systems/                   Registro de marcas (ver docs/DISEÑO.md)
     ansul_r102.py            Adaptador de ANSUL R-102 (usa los módulos de arriba)
     buckeye_bfr/             Buckeye Kitchen Mister: data, engine,
@@ -173,11 +188,13 @@ ansul/
     buckeye_reference_dialog.py  Referencia rápida Buckeye
     unit_converter_dialog.py  Convertidor pies / metros (menú Herramientas)
     diagram_widget.py         Diagrama en vivo del área protegida del equipo
-    style.py                  Hoja de estilos Qt (QSS) con la paleta ANSUL
+    style.py                  Hoja de estilos Qt (QSS): paletas clara y oscura
+    settings_dialog.py        Diálogo de Configuración (idioma y tema)
     form_widgets.py           Constructor de formularios dinámicos
 tests/
   test_engine.py              Pruebas de regresión del motor ANSUL
   test_buckeye.py             Pruebas del motor Buckeye y del registro de marcas
+  test_i18n.py                Pruebas de idioma (inglés) y configuración
   _smoke_phase4.py            Prueba de humo de interfaz (ANSUL, offscreen)
   _smoke_buckeye.py           Prueba de humo de interfaz (Buckeye, offscreen)
 docs/                         Diseño e inventario técnico Buckeye
@@ -194,9 +211,10 @@ El motor de cálculo tiene pruebas de regresión que no requieren interfaz
 gráfica:
 
 ```bash
-python -m tests              # todas las pruebas (ANSUL + Buckeye)
+python -m tests              # todas las pruebas (ANSUL + Buckeye + idioma)
 python -m tests.test_engine  # solo ANSUL
 python -m tests.test_buckeye # solo Buckeye
+python -m tests.test_i18n    # solo idioma y configuración
 ```
 
 Pruebas de humo de la interfaz (requieren PySide6, no abren ventanas):
