@@ -17,6 +17,8 @@ from .. import systems
 from .form_widgets import DynamicForm
 from .catalog_dialog import CatalogPickerDialog
 from .diagram_widget import EquipmentDiagramWidget
+from ..i18n import tr
+from .style import set_role
 
 
 class EquipmentDialog(QDialog):
@@ -41,7 +43,7 @@ class EquipmentDialog(QDialog):
         self.current_calc = None
         self.final_result = None
 
-        title = 'Editar riesgo' if existing_item else 'Agregar riesgo'
+        title = tr('Editar riesgo') if existing_item else tr('Agregar riesgo')
         self.setWindowTitle(f'{title} — {self.system.label}')
         self.setMinimumWidth(520)
         self._build_ui()
@@ -58,22 +60,22 @@ class EquipmentDialog(QDialog):
             self.category_combo.addItem(self.system.category_labels[key], key)
         self.category_combo.setCurrentIndex(order.index(self.category))
         self.category_combo.currentIndexChanged.connect(self._category_index_changed)
-        top_form.addRow('Categoría de riesgo', self.category_combo)
+        top_form.addRow(tr('Categoría de riesgo'), self.category_combo)
 
         brand_row = QHBoxLayout()
         self.brand_edit = QLineEdit((self.existing_item or {}).get('brand', ''))
         self.model_edit = QLineEdit((self.existing_item or {}).get('model', ''))
-        self.brand_edit.setPlaceholderText('Marca (opcional)')
-        self.model_edit.setPlaceholderText('Modelo (opcional)')
+        self.brand_edit.setPlaceholderText(tr('Marca (opcional)'))
+        self.model_edit.setPlaceholderText(tr('Modelo (opcional)'))
         brand_row.addWidget(self.brand_edit)
         brand_row.addWidget(self.model_edit)
-        top_form.addRow('Marca / Modelo', brand_row)
+        top_form.addRow(tr('Marca / Modelo'), brand_row)
 
         catalog_row = QHBoxLayout()
-        self.catalog_btn = QPushButton('Buscar en catálogo de modelos…')
+        self.catalog_btn = QPushButton(tr('Buscar en catálogo de modelos…'))
         self.catalog_btn.setVisible(self.system.supports_catalog)
         self.catalog_btn.clicked.connect(self._open_catalog_picker)
-        self.clear_catalog_btn = QPushButton('Usar mis propias medidas')
+        self.clear_catalog_btn = QPushButton(tr('Usar mis propias medidas'))
         self.clear_catalog_btn.clicked.connect(self._clear_catalog_ref)
         self.clear_catalog_btn.setVisible(bool(self.catalog_ref))
         catalog_row.addWidget(self.catalog_btn)
@@ -82,14 +84,14 @@ class EquipmentDialog(QDialog):
             top_form.addRow('', catalog_row)
 
         self.notes_edit = QLineEdit((self.existing_item or {}).get('notes', ''))
-        self.notes_edit.setPlaceholderText('Notas (opcional)')
-        top_form.addRow('Notas', self.notes_edit)
+        self.notes_edit.setPlaceholderText(tr('Notas (opcional)'))
+        top_form.addRow(tr('Notas'), self.notes_edit)
 
         outer.addLayout(top_form)
 
         self.catalog_banner = QLabel('')
         self.catalog_banner.setWordWrap(True)
-        self.catalog_banner.setStyleSheet('background:#eef5ff; color:#0554a3; padding:6px; border-radius:4px;')
+        set_role(self.catalog_banner, 'banner')
         self.catalog_banner.setVisible(False)
         outer.addWidget(self.catalog_banner)
 
@@ -97,10 +99,10 @@ class EquipmentDialog(QDialog):
         # medidas cuando el plano o la ficha técnica viene en otra unidad —
         # no captura nada del equipo, solo ayuda a convertir antes de teclear
         # el valor en el campo correspondiente de abajo.
-        self.converter_group = QGroupBox('Convertidor rápido de unidades')
+        self.converter_group = QGroupBox(tr('Convertidor rápido de unidades'))
         converter_layout = QHBoxLayout(self.converter_group)
-        self.converter_m_ft = self._build_converter_row('Metros (m):', 'Pies (ft):', E.m_to_ft, E.ft_to_m)
-        self.converter_in_cm = self._build_converter_row('Pulgadas (in):', 'Centímetros (cm):', E.in_to_cm, E.cm_to_in)
+        self.converter_m_ft = self._build_converter_row(tr('Metros (m):'), tr('Pies (ft):'), E.m_to_ft, E.ft_to_m)
+        self.converter_in_cm = self._build_converter_row(tr('Pulgadas (in):'), tr('Centímetros (cm):'), E.in_to_cm, E.cm_to_in)
         converter_layout.addWidget(self.converter_m_ft)
         converter_layout.addWidget(self.converter_in_cm)
         converter_layout.addStretch()
@@ -119,7 +121,7 @@ class EquipmentDialog(QDialog):
         form_diagram_row = QHBoxLayout()
         form_diagram_row.addWidget(scroll, 3)
 
-        diagram_group = QGroupBox('Diagrama del área protegida')
+        diagram_group = QGroupBox(tr('Diagrama del área protegida'))
         diagram_layout = QVBoxLayout(diagram_group)
         self.diagram = EquipmentDiagramWidget()
         diagram_layout.addWidget(self.diagram)
@@ -128,7 +130,7 @@ class EquipmentDialog(QDialog):
         outer.addLayout(form_diagram_row)
 
         # Panel de opciones (para categorías con varias boquillas candidatas)
-        self.choice_group = QGroupBox('Opciones de boquilla disponibles — elige una')
+        self.choice_group = QGroupBox(tr('Opciones de boquilla disponibles — elige una'))
         choice_layout = QVBoxLayout(self.choice_group)
         self.choice_list = QListWidget()
         self.choice_list.currentRowChanged.connect(self._choice_selected)
@@ -137,9 +139,9 @@ class EquipmentDialog(QDialog):
         outer.addWidget(self.choice_group)
 
         # Resultado final
-        self.result_label = QLabel('Complete los datos para calcular la boquilla requerida.')
+        self.result_label = QLabel(tr('Complete los datos para calcular la boquilla requerida.'))
         self.result_label.setWordWrap(True)
-        self.result_label.setStyleSheet('padding:8px; border:1px solid #ccc; border-radius:4px;')
+        set_role(self.result_label, 'result')
         outer.addWidget(self.result_label)
 
         self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -252,13 +254,12 @@ class EquipmentDialog(QDialog):
             self.clear_catalog_btn.setVisible(True)
             if result:
                 self.catalog_banner.setText(
-                    f"Usando datos de catálogo: {entry.get('brand','')} {entry.get('model','')}. "
-                    'Las boquillas se tomaron directamente del catálogo (no se calculan por medidas).')
+                    tr('Usando datos de catálogo: {0} {1}. Las boquillas se tomaron directamente del catálogo (no '
+                       'se calculan por medidas).').format(entry.get('brand',''), entry.get('model','')))
             else:
                 self.catalog_banner.setText(
-                    f"Referencia de catálogo: {entry.get('brand','')} {entry.get('model','')} — "
-                    'el manual no da una cantidad de boquilla fija para este modelo; continúe capturando '
-                    'las medidas manualmente abajo.')
+                    tr('Referencia de catálogo: {0} {1} — el manual no da una cantidad de boquilla fija para este '
+                       'modelo; continúe capturando las medidas manualmente abajo.').format(entry.get('brand',''), entry.get('model','')))
             self.catalog_banner.setVisible(True)
             self._recompute()
 
@@ -283,8 +284,8 @@ class EquipmentDialog(QDialog):
         if not self.system.has_required_inputs(self.category, self.values):
             self.choice_group.setVisible(False)
             self.final_result = None
-            self.result_label.setText('Complete los datos requeridos (*) para calcular la boquilla.')
-            self.result_label.setStyleSheet('padding:8px; border:1px solid #ccc; border-radius:4px; color:#666;')
+            self.result_label.setText(tr('Complete los datos requeridos (*) para calcular la boquilla.'))
+            set_role(self.result_label, 'result')
             return
 
         calc = cdef['compute'](self.values)
@@ -332,24 +333,23 @@ class EquipmentDialog(QDialog):
 
     def _show_result(self, result):
         if not result:
-            self._show_error('No se pudo calcular un resultado.')
+            self._show_error(tr('No se pudo calcular un resultado.'))
             return
-        nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in (result.get('nozzles') or [])) or 'Sin boquillas (informativo)'
-        text = (f"<b>Boquillas:</b> {nozz_txt} &nbsp;&nbsp; <b>{self.system.flow_label}:</b> {E.fmt_num(result.get('flowNumber'))}<br>"
-                f"<b>Altura de montaje:</b> {result.get('heightRange', '—')}<br>"
-                f"<b>Detalle:</b> {result.get('detail', '')}")
+        nozz_txt = ', '.join(f"{n['code']} ×{n['qty']}" for n in (result.get('nozzles') or [])) or tr('Sin boquillas (informativo)')
+        text = (tr('<b>Boquillas:</b> {0} &nbsp;&nbsp; <b>{1}:</b> {2}<br><b>Altura de montaje:</b> '
+                   '{3}<br><b>Detalle:</b> {4}').format(nozz_txt, self.system.flow_label, E.fmt_num(result.get('flowNumber')), result.get('heightRange', '—'), result.get('detail', '')))
         self.result_label.setText(text)
-        self.result_label.setStyleSheet('padding:8px; border:1px solid #2e7d32; background:#f1f8f2; border-radius:4px;')
+        set_role(self.result_label, 'result-ok')
 
     def _show_error(self, msg):
-        self.result_label.setText(msg or f'Estas medidas no encajan en ninguna opción estándar del manual {self.system.label}.')
-        self.result_label.setStyleSheet('padding:8px; border:1px solid #b71c1c; background:#fdf1f1; border-radius:4px; color:#7a1414;')
+        self.result_label.setText(msg or tr('Estas medidas no encajan en ninguna opción estándar del manual {0}.').format(self.system.label))
+        set_role(self.result_label, 'result-error')
 
     # ------------------------------------------------------------------
     def _on_accept(self):
         if not self.final_result:
-            QMessageBox.warning(self, 'Datos incompletos',
-                                 'Complete los datos necesarios para obtener un resultado válido antes de guardar.')
+            QMessageBox.warning(self, tr('Datos incompletos'),
+                                 tr('Complete los datos necesarios para obtener un resultado válido antes de guardar.'))
             return
         self.result_item = {
             'category': self.category,

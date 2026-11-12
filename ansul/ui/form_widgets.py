@@ -10,6 +10,8 @@ from PySide6.QtGui import QDoubleValidator
 from PySide6.QtWidgets import (QWidget, QFormLayout, QLineEdit, QComboBox, QCheckBox,
                                 QLabel, QVBoxLayout)
 
+from .style import set_role
+
 
 class DynamicForm(QWidget):
     """Formulario que se reconstruye cada vez que cambian los campos
@@ -56,7 +58,7 @@ class DynamicForm(QWidget):
             if ftype == 'info':
                 lbl = QLabel(label_text)
                 lbl.setWordWrap(True)
-                lbl.setStyleSheet('color: #555; font-style: italic;')
+                set_role(lbl, 'info')
                 self._layout.addRow(lbl)
                 continue
 
@@ -114,7 +116,7 @@ class DynamicForm(QWidget):
             if hint and ftype in ('number',):
                 hint_lbl = QLabel(hint)
                 hint_lbl.setWordWrap(True)
-                hint_lbl.setStyleSheet('color: #888; font-size: 11px;')
+                set_role(hint_lbl, 'hint')
                 self._layout.addRow('', hint_lbl)
 
         self._values = values

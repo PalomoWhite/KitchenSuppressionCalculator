@@ -24,18 +24,26 @@ Para ejecutar:
 import sys
 import os
 
+from PySide6.QtCore import QLibraryInfo, QTranslator
 from PySide6.QtWidgets import QApplication, QMessageBox
 
 from ansul.store import Store
 from ansul.ui.main_window import MainWindow
-from ansul.ui.style import STYLE_QSS
+from ansul import settings, i18n
+from ansul.ui import style
+from ansul.i18n import tr
 
 
 def main():
     app = QApplication(sys.argv)
     app.setApplicationName('Ansul Flow Calculator')
     app.setOrganizationName('AnsulFlowCalculator')
-    app.setStyleSheet(STYLE_QSS)
+    style.apply_theme(app, settings.load()['theme'])
+
+    # Botones estándar de Qt (Sí/No, Aceptar/Cancelar…) en el idioma elegido.
+    qt_translator = QTranslator(app)
+    if qt_translator.load(f'qtbase_{i18n.language()}', QLibraryInfo.path(QLibraryInfo.TranslationsPath)):
+        app.installTranslator(qt_translator)
 
     store = Store(path=os.environ.get('ANSULCALC_DB'))
     try:
@@ -43,11 +51,10 @@ def main():
     except OSError as e:
         QMessageBox.critical(
             None,
-            'No se pudo abrir la base de datos',
-            f'No fue posible leer el archivo de proyectos: \n{store.path}\n\n'
-            f'Detalle: {e}\n\n'
-            'El programa se cerrará para no sobrescribir sus datos. '
-            'Verifique que el archivo exista y tenga permisos de lectura. '
+            tr('No se pudo abrir la base de datos'),
+            tr('No fue posible leer el archivo de proyectos: \n{0}\n\nDetalle: {1}\n\nEl programa se cerrará '
+               'para no sobrescribir sus datos. Verifique que el archivo exista y tenga permisos de '
+               'lectura. ').format(store.path, e)
         )
         sys.exit(1)
 
@@ -57,11 +64,10 @@ def main():
     if store.corrupt_backup:
         QMessageBox.warning(
             window,
-            'El archivo de proyectos "esta dañado"',
-            'El archivo de proyectos estaba dañado y no se pudo leer.\n\n'
-            f'Se guardó una copia intacta en: \n{store.corrupt_backup}\n\n'
-            'El programa inició con una lista vacía. Conserve esa copia '
-            'y comuníquese con soporte técnico para intentar recuperarla'
+            tr('El archivo de proyectos "esta dañado"'),
+            tr('El archivo de proyectos estaba dañado y no se pudo leer.\n\nSe guardó una copia intacta en: '
+               '\n{0}\n\nEl programa inició con una lista vacía. Conserve esa copia y comuníquese con '
+               'soporte técnico para intentar recuperarla').format(store.corrupt_backup)
         )
 
     sys.exit(app.exec())

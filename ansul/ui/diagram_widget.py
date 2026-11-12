@@ -9,11 +9,14 @@ usando la misma paleta azul de la app (relleno #e8f1fb, trazo #0554a3).
 from PySide6.QtCore import Qt, QRectF
 from PySide6.QtGui import QPainter, QPen, QBrush, QColor, QFont
 from PySide6.QtWidgets import QWidget
+from ..i18n import tr
 
-_FILL = QColor('#e8f1fb')
-_STROKE = QColor('#0554a3')
-_TEXT = QColor('#5a6472')
-_MUTED = QColor('#98a2b3')
+from . import style
+
+
+def _c(name):
+    """Color del tema activo (claro u oscuro) para el diagrama."""
+    return QColor(style.color(name))
 
 # Categoría -> (ancho_key, fondo_key, unidad) para las que se dibujan como
 # rectángulo. Para 'fryer' se sustituye por overallL/overallD cuando el
@@ -129,12 +132,12 @@ class EquipmentDiagramWidget(QWidget):
         try:
             rect = self.rect().adjusted(12, 10, -12, -10)
             if not self._mode or not self._dims:
-                painter.setPen(QPen(_MUTED))
+                painter.setPen(QPen(_c('DIAGRAM_MUTED')))
                 font = QFont()
                 font.setPointSize(9)
                 painter.setFont(font)
                 painter.drawText(self.rect(), Qt.AlignCenter,
-                                  'Capture las medidas para ver\nel diagrama del área protegida.')
+                                  tr('Capture las medidas para ver\nel diagrama del área protegida.'))
                 return
             if self._mode == 'rect':
                 self._draw_rect(painter, rect, *self._dims)
@@ -152,8 +155,8 @@ class EquipmentDiagramWidget(QWidget):
         x = rect.left() + (rect.width() - draw_w) / 2
         y = rect.top() + (avail_h - draw_h) / 2
         box = QRectF(x, y, draw_w, draw_h)
-        painter.setBrush(QBrush(_FILL))
-        painter.setPen(QPen(_STROKE, 2))
+        painter.setBrush(QBrush(_c('DIAGRAM_FILL')))
+        painter.setPen(QPen(_c('DIAGRAM_STROKE'), 2))
         painter.drawRoundedRect(box, 4, 4)
         self._draw_caption(painter, rect, box.bottom(), f'{_fmt(w)} × {_fmt(h)} {self._unit}')
 
@@ -166,13 +169,13 @@ class EquipmentDiagramWidget(QWidget):
         x = rect.left() + (rect.width() - size) / 2
         y = rect.top() + (rect.height() - 22 - size) / 2
         box = QRectF(x, y, size, size)
-        painter.setBrush(QBrush(_FILL))
-        painter.setPen(QPen(_STROKE, 2))
+        painter.setBrush(QBrush(_c('DIAGRAM_FILL')))
+        painter.setPen(QPen(_c('DIAGRAM_STROKE'), 2))
         painter.drawEllipse(box)
         self._draw_caption(painter, rect, box.bottom(), f'Ø {_fmt(d)} {self._unit}')
 
     def _draw_caption(self, painter, rect, y, text):
-        painter.setPen(QPen(_TEXT))
+        painter.setPen(QPen(_c('DIAGRAM_TEXT')))
         font = QFont()
         font.setPointSize(9)
         painter.setFont(font)
