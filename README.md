@@ -10,6 +10,9 @@ incendios en cocinas comerciales (ANSUL R-102 y Buckeye Kitchen Mister).
 Autor / Author: **Miguel Alejandro Gutiérrez Torres** · Licencia / License:
 [GNU GPL v3.0](LICENSE)
 
+**Descargas / Downloads:** Windows, macOS (Apple Silicon) y Linux en la
+sección [Releases](https://github.com/PalomoWhite/KitchenSuppressionCalculator/releases).
+
 ---
 
 ## Español
@@ -219,8 +222,9 @@ docs/                         Diseño e inventario técnico Buckeye
 packaging/windows/            Archivos para generar el instalador de Windows
                                (spec de PyInstaller, script .bat, script de
                                Inno Setup, guía paso a paso)
-.github/workflows/            Workflow de GitHub Actions para compilar el
-                               instalador de Windows en la nube
+packaging/multiplataforma/    Spec de PyInstaller para macOS y Linux
+.github/workflows/build.yml   Compila Windows, macOS y Linux en GitHub Actions
+                               y publica el Release al subir una etiqueta v*
 ```
 
 ### Pruebas
@@ -499,8 +503,9 @@ docs/                         Design and Buckeye technical inventory
 packaging/windows/            Files to build the Windows installer
                                (PyInstaller spec, .bat script, Inno Setup
                                script, step-by-step guide)
-.github/workflows/            GitHub Actions workflow that builds the
-                               Windows installer in the cloud
+packaging/multiplataforma/    PyInstaller spec for macOS and Linux
+.github/workflows/build.yml   Builds Windows, macOS and Linux on GitHub Actions
+                               and publishes the Release when a v* tag is pushed
 ```
 
 The source code (comments, docstrings and interface texts) is written in

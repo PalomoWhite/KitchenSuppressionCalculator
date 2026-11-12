@@ -100,27 +100,42 @@ en `1.1.0`).
 
 ## Opción B: compilar en la nube con GitHub Actions (sin PC con Windows)
 
-Ya se agregó el archivo `.github/workflows/build-windows.yml`, que le pide
-a GitHub que arme el instalador en una máquina de Windows temporal. Pasos:
+El archivo `.github/workflows/build.yml` le pide a GitHub que compile el
+programa en máquinas temporales de **Windows, macOS y Linux** (gratis en
+repositorios públicos). Antes de compilar, cada máquina corre todas las
+pruebas; si alguna falla, no se genera nada.
 
-1. Sube este proyecto a un repositorio de GitHub (puede ser **privado** —
-   no hace falta que sea público). Si nunca lo has hecho:
-   [docs.github.com/es/get-started/quickstart](https://docs.github.com/es/get-started/quickstart/create-a-repo).
-2. En GitHub, entra a la pestaña **Actions** del repositorio.
-3. Elige el workflow **"Compilar instalador de Windows"** en la lista de
-   la izquierda.
-4. Presiona **Run workflow** (botón verde) → **Run workflow** de nuevo
-   para confirmar.
-5. Espera unos minutos a que termine (verás una marca verde ✓ cuando
-   acabe).
-6. Entra a esa ejecución terminada y baja hasta la sección **Artifacts**:
-   ahí aparece **KitchenSuppressionCalculator_Setup** — descárgalo (es un .zip que
-   trae adentro el `KitchenSuppressionCalculator_Setup.exe`).
+**Para publicar una versión nueva** (lo normal):
 
-Ese `.exe` es idéntico al que se generaría con la Opción A, solo que se
-compiló en la nube. También puedes hacer que se genere automáticamente
-cada vez que subas una etiqueta de versión (`git tag v1.0.0 && git push
---tags`), sin tener que entrar manualmente a "Run workflow".
+1. Cambia `MyAppVersion` en `packaging/windows/installer.iss` (por ejemplo
+   a `1.3.1`) y haz commit.
+2. Crea la etiqueta y súbela:
+   `git tag -a v1.3.1 -m "Version 1.3.1"` y luego
+   `git push origin main --tags`.
+3. En unos 10-15 minutos aparece en la sección **Releases** del repositorio
+   una versión nueva con los tres archivos para descargar:
+   - `KitchenSuppressionCalculator_Windows_Setup.exe`
+   - `KitchenSuppressionCalculator_macOS_AppleSilicon.dmg`
+   - `KitchenSuppressionCalculator_Linux_x64.tar.gz`
+
+**Para solo probar una compilación** (sin publicar nada): pestaña
+**Actions** → **"Compilar Windows, macOS y Linux"** → **Run workflow**.
+Al terminar, los archivos quedan en la sección **Artifacts** de esa
+ejecución.
+
+Notas por sistema:
+
+- **macOS:** se compila para Mac con chip Apple (M1 en adelante). La app no
+  está firmada con un certificado de Apple (cuesta 99 USD al año), así que
+  la primera vez macOS dirá que no puede verificarla: hay que abrirla con
+  clic derecho → **Abrir**, o en Ajustes del Sistema → Privacidad y
+  seguridad → **Abrir de todos modos**.
+- **Linux:** se descomprime el `.tar.gz` y se ejecuta
+  `KitchenSuppressionCalculator/KitchenSuppressionCalculator`. En algunas
+  distribuciones hace falta instalar la biblioteca `libxcb-cursor0`
+  (Ubuntu/Debian: `sudo apt install libxcb-cursor0`).
+- **Windows:** puede aparecer el aviso de SmartScreen ("Windows protegió su
+  PC") por no estar firmado: **Más información → Ejecutar de todas formas**.
 
 ---
 
