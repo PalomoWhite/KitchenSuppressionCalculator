@@ -13,7 +13,7 @@
 ; Cambia MyAppVersion cuando publiques una nueva versión.
 
 #define MyAppName "Kitchen Suppression Calculator"
-#define MyAppVersion "1.3.0"
+#define MyAppVersion "1.3.1"
 #define MyAppPublisher "Miguel Alejandro Gutiérrez Torres"
 #define MyAppExeName "KitchenSuppressionCalculator.exe"
 ; Ruta a la carpeta que generó PyInstaller (relativa a este .iss)
@@ -32,6 +32,8 @@ OutputBaseFilename=KitchenSuppressionCalculator_Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=app.ico
+UninstallDisplayIcon={app}\{#MyAppExeName}
 ; Instalar solo para el usuario actual evita pedir permisos de administrador;
 ; cambia a "admin" si prefieres instalar para todos los usuarios del equipo.
 PrivilegesRequired=lowest

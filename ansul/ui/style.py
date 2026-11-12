@@ -5,6 +5,22 @@ de AnsulCalc.html (variables :root, .card, .btn/.btn-primary/.btn-secondary/
 .btn-danger, .topbar, .section-title, .field label) a Qt Style Sheets, para
 que la versión de escritorio se vea como la herramienta web original.
 """
+from pathlib import Path
+
+# Logotipo del programa (ventana, barra de tareas, "Acerca de").
+ASSETS_DIR = Path(__file__).resolve().parent / 'assets'
+
+
+def app_icon():
+    """Ícono del programa en varios tamaños (QIcon elige el adecuado)."""
+    from PySide6.QtGui import QIcon
+    icon = QIcon()
+    for name in ('logo_256.png', 'logo_512.png'):
+        p = ASSETS_DIR / name
+        if p.exists():
+            icon.addFile(str(p))
+    return icon
+
 
 # Paletas: 'light' es la original (tomada de :root en AnsulCalc.html) y
 # 'dark' es el modo oscuro. Todo color de la interfaz sale de aquí.

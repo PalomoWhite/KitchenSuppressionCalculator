@@ -168,6 +168,14 @@ def test_data_folder_keeps_old_name():
               settings.default_data_dir(home) == docs / 'KitchenSuppressionCalculator')
 
 
+def test_logo_files():
+    from ansul.ui import style
+    for name in ('logo.svg', 'logo_256.png', 'logo_512.png'):
+        check(f'Logotipo: existe ansul/ui/assets/{name}', (style.ASSETS_DIR / name).exists())
+    for rel in ('packaging/windows/app.ico', 'packaging/multiplataforma/app.icns'):
+        check(f'Ícono para el ejecutable: {rel}', os.path.getsize(os.path.join(ROOT, rel)) > 1000)
+
+
 def run_all():
     tests = [v for k, v in globals().items() if k.startswith('test_') and callable(v)]
     for t in tests:

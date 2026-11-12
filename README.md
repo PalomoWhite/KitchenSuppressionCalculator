@@ -1,3 +1,5 @@
+<p align="center"><img src="ansul/ui/assets/logo_256.png" alt="Kitchen Suppression Calculator" width="128"></p>
+
 # Kitchen Suppression Calculator
 
 **[Español](#español)** · **[English](#english)**

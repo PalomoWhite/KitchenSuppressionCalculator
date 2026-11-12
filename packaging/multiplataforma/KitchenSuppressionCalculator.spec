@@ -34,7 +34,7 @@ a = Analysis(
     [MAIN_SCRIPT],
     pathex=[str(REPO_ROOT)],
     binaries=[],
-    datas=[],
+    datas=[(str(REPO_ROOT / 'ansul' / 'ui' / 'assets'), 'ansul/ui/assets')],   # logotipo
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -78,7 +78,7 @@ if sys.platform == 'darwin':
     app = BUNDLE(
         coll,
         name=f'{APP_NAME}.app',
-        icon=None,
+        icon=str(Path(SPECPATH) / 'app.icns'),   # logotipo de la app de Mac
         bundle_identifier='io.github.palomowhite.kitchensuppressioncalculator',
         version=APP_VERSION,
         info_plist={

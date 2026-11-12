@@ -10,8 +10,8 @@
 # (modo "onedir": una carpeta con el .exe y sus dependencias — arranca más
 # rápido que el modo "onefile" y es lo que espera installer.iss).
 #
-# Si agregas un ícono .ico propio, colócalo en packaging/windows/app.ico y
-# descomenta la línea "icon=" más abajo.
+# El ícono del .exe es packaging/windows/app.ico (se genera a partir de
+# ansul/ui/assets/logo.svg).
 
 import sys
 from pathlib import Path
@@ -30,7 +30,7 @@ a = Analysis(
     [MAIN_SCRIPT],
     pathex=[str(REPO_ROOT)],
     binaries=[],
-    datas=[],
+    datas=[(str(REPO_ROOT / 'ansul' / 'ui' / 'assets'), 'ansul/ui/assets')],   # logotipo
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -60,7 +60,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    # icon=str(Path(SPECPATH) / 'app.ico'),
+    icon=str(Path(SPECPATH) / 'app.ico'),   # logotipo del .exe
 )
 
 coll = COLLECT(

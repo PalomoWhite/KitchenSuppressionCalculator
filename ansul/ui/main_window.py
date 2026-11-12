@@ -905,7 +905,7 @@ class MainWindow(QMainWindow):
         dlg.exec()
 
     def _show_about(self):
-        QMessageBox.information(self, tr('Acerca de Kitchen Suppression Calculator'),
+        QMessageBox.about(self, tr('Acerca de Kitchen Suppression Calculator'),
                                  tr('Kitchen Suppression Calculator\n\nCalculadora de apoyo para el diseño preliminar de sistemas de '
                                     'supresión para cocinas comerciales:\n• ANSUL(R) R-102 — manual R-102 (Part No. 418087) y '
                                     'Hoja Resumen F-2015158-01_LAS.\n• Buckeye Kitchen Mister — manual técnico BFR-TM Rev. 6 '

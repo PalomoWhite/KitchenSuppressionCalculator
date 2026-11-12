@@ -49,6 +49,15 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName('Kitchen Suppression Calculator')
     app.setOrganizationName('KitchenSuppressionCalculator')
+    app.setWindowIcon(style.app_icon())
+    if sys.platform == 'win32':
+        # Para que la barra de tareas de Windows muestre el logotipo del
+        # programa y no el de Python al correrlo con "python main.py".
+        try:
+            import ctypes
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID('KitchenSuppressionCalculator')
+        except (AttributeError, OSError):
+            pass
     style.apply_theme(app, settings.load()['theme'])
 
     # Botones estándar de Qt (Sí/No, Aceptar/Cancelar…) en el idioma elegido.
