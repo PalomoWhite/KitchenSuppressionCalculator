@@ -1,5 +1,5 @@
 @echo off
-REM Compila Ansul Flow Calculator para Windows con PyInstaller.
+REM Compila Kitchen Suppression Calculator para Windows con PyInstaller.
 REM
 REM Se puede ejecutar de dos formas:
 REM   - Doble clic sobre este archivo (packaging\windows\build_windows.bat), o
@@ -61,10 +61,10 @@ rmdir /s /q build 2>nul
 rmdir /s /q dist 2>nul
 
 echo === 4/4: Compilando con PyInstaller ===
-python -m PyInstaller --noconfirm packaging\windows\AnsulFlowCalculator.spec
+python -m PyInstaller --noconfirm packaging\windows\KitchenSuppressionCalculator.spec
 
 REM Verificar que el .exe realmente se haya creado antes de decir "Listo".
-if not exist dist\AnsulFlowCalculator\AnsulFlowCalculator.exe (
+if not exist dist\KitchenSuppressionCalculator\KitchenSuppressionCalculator.exe (
     echo.
     echo *** ERROR: PyInstaller no genero el .exe. Revisa el mensaje de error ***
     echo *** de arriba ^(la ultima linea suele decir "Error" o "Traceback"^).  ***
@@ -75,7 +75,7 @@ if not exist dist\AnsulFlowCalculator\AnsulFlowCalculator.exe (
 
 echo.
 echo Listo. El programa quedo en:
-echo     %CD%\dist\AnsulFlowCalculator\AnsulFlowCalculator.exe
+echo     %CD%\dist\KitchenSuppressionCalculator\KitchenSuppressionCalculator.exe
 echo Pruebalo con doble clic antes de crear el instalador (paso 3 de
 echo packaging\windows\instalador_windows.md).
 

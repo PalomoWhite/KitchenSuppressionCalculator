@@ -13,20 +13,30 @@ import json
 import os
 from pathlib import Path
 
-APP_DIR_NAME = 'AnsulFlowCalculator'
+APP_DIR_NAME = 'KitchenSuppressionCalculator'
+# Nombre anterior del programa: si ya existe esa carpeta (proyectos guardados
+# antes del cambio de nombre) se sigue usando, para no "perder" nada.
+OLD_APP_DIR_NAME = 'AnsulFlowCalculator'
 LANGUAGES = ('es', 'en')
 THEMES = ('light', 'dark')
 DEFAULTS = {'language': 'es', 'theme': 'light'}
 
 
-def default_data_dir():
-    """Carpeta de datos por defecto: Documentos/AnsulFlowCalculator (o el
-    home del usuario si no existe una carpeta de Documentos estándar)."""
-    home = Path.home()
+def default_data_dir(home=None):
+    """Carpeta de datos por defecto: Documentos/KitchenSuppressionCalculator
+    (o el home del usuario si no existe una carpeta de Documentos estándar).
+    Si existe la carpeta del nombre anterior (AnsulFlowCalculator) y aún no
+    la nueva, se usa la anterior."""
+    home = Path(home) if home else Path.home()
+    base = home
     for c in (home / 'Documents', home / 'Documentos'):
         if c.is_dir():
-            return c / APP_DIR_NAME
-    return home / APP_DIR_NAME
+            base = c
+            break
+    new, old = base / APP_DIR_NAME, base / OLD_APP_DIR_NAME
+    if not new.exists() and old.is_dir():
+        return old
+    return new
 
 
 def settings_path():

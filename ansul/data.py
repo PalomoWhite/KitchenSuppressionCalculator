@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Ansul Flow Calculator — Datos de referencia del sistema ANSUL(R) R-102.
+Kitchen Suppression Calculator — Datos de referencia del sistema ANSUL(R) R-102.
 
 Este módulo es un puerto directo (1:1) de las tablas de datos que ya estaban
 validadas en la herramienta AnsulCalc.html (basadas en el manual ANSUL(R)
@@ -271,7 +271,7 @@ PDF_NOZZLE_COLS = [
     {'label': tr('Cantidad'), 'width': 1, 'num': True},
 ]
 PDF_DISCLAIMER = (
-    tr('Reporte generado con Ansul Flow Calculator como ayuda de diseño preliminar con base en el '
+    tr('Reporte generado con Kitchen Suppression Calculator como ayuda de diseño preliminar con base en el '
        'manual ANSUL(R) R-102 (Part No. 418087). No sustituye la verificación, sello y responsiva '
        'de un diseñador certificado ANSUL R-102 conforme a NFPA 17A y los codigos locales '
        'aplicables. Verifique especificaciones especificas por marca/modelo de equipo antes de '

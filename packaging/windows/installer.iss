@@ -1,23 +1,23 @@
 ; Script de Inno Setup para crear el instalador de Windows de
-; Ansul Flow Calculator, a partir de la carpeta que genera PyInstaller
-; (dist\AnsulFlowCalculator\).
+; Kitchen Suppression Calculator, a partir de la carpeta que genera PyInstaller
+; (dist\KitchenSuppressionCalculator\).
 ;
 ; Uso:
 ;   1. Compila primero con build_windows.bat (debe existir
-;      dist\AnsulFlowCalculator\AnsulFlowCalculator.exe).
+;      dist\KitchenSuppressionCalculator\KitchenSuppressionCalculator.exe).
 ;   2. Abre este archivo con Inno Setup (Compiler) y presiona "Compile"
 ;      (o desde línea de comandos: ISCC.exe packaging\windows\installer.iss).
 ;   3. El instalador queda en packaging\windows\output\
-;      AnsulFlowCalculator_Setup.exe
+;      KitchenSuppressionCalculator_Setup.exe
 ;
 ; Cambia MyAppVersion cuando publiques una nueva versión.
 
-#define MyAppName "Ansul Flow Calculator"
+#define MyAppName "Kitchen Suppression Calculator"
 #define MyAppVersion "1.2.0"
-#define MyAppPublisher "Tu empresa"
-#define MyAppExeName "AnsulFlowCalculator.exe"
+#define MyAppPublisher "Miguel Alejandro Gutiérrez Torres"
+#define MyAppExeName "KitchenSuppressionCalculator.exe"
 ; Ruta a la carpeta que generó PyInstaller (relativa a este .iss)
-#define MyDistDir "..\..\dist\AnsulFlowCalculator"
+#define MyDistDir "..\..\dist\KitchenSuppressionCalculator"
 
 [Setup]
 AppId={{C332CC2F-E7ED-40D6-8CDD-6C8791B439F6}}
@@ -28,7 +28,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=output
-OutputBaseFilename=AnsulFlowCalculator_Setup
+OutputBaseFilename=KitchenSuppressionCalculator_Setup
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern

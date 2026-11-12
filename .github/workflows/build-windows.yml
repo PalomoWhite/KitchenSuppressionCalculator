@@ -1,4 +1,4 @@
-# Compila el instalador de Windows (AnsulFlowCalculator_Setup.exe) en una
+# Compila el instalador de Windows (KitchenSuppressionCalculator_Setup.exe) en una
 # máquina Windows de GitHub. Ver packaging/windows/instalador_windows.md,
 # "Opción B".
 name: Compilar instalador de Windows
@@ -28,7 +28,7 @@ jobs:
         run: python -m tests
 
       - name: Compilar con PyInstaller
-        run: python -m PyInstaller --noconfirm packaging/windows/AnsulFlowCalculator.spec
+        run: python -m PyInstaller --noconfirm packaging/windows/KitchenSuppressionCalculator.spec
 
       - name: Instalar Inno Setup
         run: choco install innosetup --no-progress -y
@@ -38,5 +38,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: AnsulFlowCalculator_Setup
-          path: packaging/windows/output/AnsulFlowCalculator_Setup.exe
+          name: KitchenSuppressionCalculator_Setup
+          path: packaging/windows/output/KitchenSuppressionCalculator_Setup.exe

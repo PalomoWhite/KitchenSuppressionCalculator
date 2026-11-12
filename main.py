@@ -1,15 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Ansul Flow Calculator (versión de escritorio en Python / PySide6)
-===================================================================
+Kitchen Suppression Calculator (versión de escritorio en Python / PySide6)
+==========================================================================
+
+Copyright (C) 2026 Miguel Alejandro Gutiérrez Torres
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version. This program is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+Public License (file LICENSE) for more details.
 
 Calculadora de apoyo para el diseño preliminar de sistemas de supresión
-ANSUL(R) R-102 para cocinas comerciales.
+para cocinas comerciales: ANSUL(R) R-102 y Buckeye Kitchen Mister.
 
 Basada en:
   - El manual ANSUL(R) R-102 (Part No. 418087).
   - La Hoja Resumen ANSUL F-2015158-01_LAS.
+  - El manual técnico Buckeye Kitchen Mister (BFR-TM Rev. 6).
   - La lógica ya validada en la herramienta AnsulCalc.html.
 
 AVISO IMPORTANTE: esta aplicación es una AYUDA DE DISEÑO PRELIMINAR. El
@@ -36,8 +47,8 @@ from ansul.i18n import tr
 
 def main():
     app = QApplication(sys.argv)
-    app.setApplicationName('Ansul Flow Calculator')
-    app.setOrganizationName('AnsulFlowCalculator')
+    app.setApplicationName('Kitchen Suppression Calculator')
+    app.setOrganizationName('KitchenSuppressionCalculator')
     style.apply_theme(app, settings.load()['theme'])
 
     # Botones estándar de Qt (Sí/No, Aceptar/Cancelar…) en el idioma elegido.

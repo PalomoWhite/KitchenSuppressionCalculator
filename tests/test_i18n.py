@@ -152,6 +152,22 @@ def test_settings_roundtrip():
                 os.environ['ANSULCALC_DB'] = old
 
 
+def test_data_folder_keeps_old_name():
+    from pathlib import Path
+    from ansul import settings
+    with tempfile.TemporaryDirectory() as home:
+        docs = Path(home) / 'Documents'
+        docs.mkdir()
+        check('Instalación nueva: carpeta con el nombre nuevo',
+              settings.default_data_dir(home) == docs / 'KitchenSuppressionCalculator')
+        (docs / 'AnsulFlowCalculator').mkdir()
+        check('Si ya hay proyectos en la carpeta del nombre anterior, se sigue usando esa',
+              settings.default_data_dir(home) == docs / 'AnsulFlowCalculator')
+        (docs / 'KitchenSuppressionCalculator').mkdir()
+        check('Si ya existe la carpeta nueva, se usa la nueva',
+              settings.default_data_dir(home) == docs / 'KitchenSuppressionCalculator')
+
+
 def run_all():
     tests = [v for k, v in globals().items() if k.startswith('test_') and callable(v)]
     for t in tests:

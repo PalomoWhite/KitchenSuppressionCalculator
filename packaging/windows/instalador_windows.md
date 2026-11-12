@@ -1,4 +1,4 @@
-# Cómo crear el instalador de Windows de Ansul Flow Calculator
+# Cómo crear el instalador de Windows de Kitchen Suppression Calculator
 
 La app está escrita en Python/PySide6, así que el `.exe` de Windows **debe
 compilarse en Windows** (no se puede generar de forma confiable desde Mac o
@@ -14,7 +14,7 @@ te acomode:
   proyecto a un repositorio de GitHub (puede ser privado).
 
 Cualquiera de las dos produce el mismo resultado: un archivo
-`AnsulFlowCalculator_Setup.exe` que el usuario final descarga, ejecuta, y
+`KitchenSuppressionCalculator_Setup.exe` que el usuario final descarga, ejecuta, y
 le instala la app con acceso directo en el Escritorio y en el menú Inicio
 — como cualquier programa de Windows normal.
 
@@ -42,8 +42,8 @@ Store, Python no quedó en el PATH: repite el paso 1.
 
 ### 2. Compilar el programa (PyInstaller)
 
-1. Descomprime `AnsulFlowCalculator_Windows.zip` en una carpeta fija, por
-   ejemplo `C:\Proyectos\AnsulFlowCalculator_Windows`. Revisa que dentro
+1. Descomprime `KitchenSuppressionCalculator_Windows.zip` en una carpeta fija, por
+   ejemplo `C:\Proyectos\KitchenSuppressionCalculator_Windows`. Revisa que dentro
    de esa carpeta estén directamente `main.py`, `ansul\` y `packaging\` —
    si al descomprimir quedó una carpeta dentro de otra con el mismo
    nombre, usa la de adentro.
@@ -57,7 +57,7 @@ Store, Python no quedó en el PATH: repite el paso 1.
    queda en:
 
    ```
-   dist\AnsulFlowCalculator\AnsulFlowCalculator.exe
+   dist\KitchenSuppressionCalculator\KitchenSuppressionCalculator.exe
    ```
 
    Si en lugar de "Listo" aparece un mensaje de ERROR, la ventana se queda
@@ -75,7 +75,7 @@ Store, Python no quedó en el PATH: repite el paso 1.
 4. El instalador queda en:
 
    ```
-   packaging\windows\output\AnsulFlowCalculator_Setup.exe
+   packaging\windows\output\KitchenSuppressionCalculator_Setup.exe
    ```
 
 Ese archivo es el que compartes o instalas. Al ejecutarlo, instala la app
@@ -114,8 +114,8 @@ a GitHub que arme el instalador en una máquina de Windows temporal. Pasos:
 5. Espera unos minutos a que termine (verás una marca verde ✓ cuando
    acabe).
 6. Entra a esa ejecución terminada y baja hasta la sección **Artifacts**:
-   ahí aparece **AnsulFlowCalculator_Setup** — descárgalo (es un .zip que
-   trae adentro el `AnsulFlowCalculator_Setup.exe`).
+   ahí aparece **KitchenSuppressionCalculator_Setup** — descárgalo (es un .zip que
+   trae adentro el `KitchenSuppressionCalculator_Setup.exe`).
 
 Ese `.exe` es idéntico al que se generaría con la Opción A, solo que se
 compiló en la nube. También puedes hacer que se genere automáticamente
@@ -127,7 +127,7 @@ cada vez que subas una etiqueta de versión (`git tag v1.0.0 && git push
 ## Cómo actualizar una instalación existente
 
 **No hace falta desinstalar ni reinstalar desde cero.** El mismo
-`AnsulFlowCalculator_Setup.exe` que instala el programa por primera vez
+`KitchenSuppressionCalculator_Setup.exe` que instala el programa por primera vez
 también sirve como paquete de actualización: `installer.iss` ya trae un
 identificador fijo (`AppId`) que no cambia entre versiones, así que cuando
 alguien ejecuta un instalador nuevo en una PC que ya tiene el programa,
@@ -144,13 +144,13 @@ Para publicar una actualización:
    obligatorio: aunque lo dejes igual, la actualización de todas formas
    sobreescribe los archivos correctamente.
 3. Vuelve a compilar (Opción A o B de arriba) para generar el nuevo
-   `AnsulFlowCalculator_Setup.exe`.
+   `KitchenSuppressionCalculator_Setup.exe`.
 4. Comparte ese archivo con los usuarios — lo ejecutan igual que la
    primera vez ("Siguiente, Siguiente, Instalar"), sin desinstalar nada a
    mano.
 
 Lo único que **no** se toca en una actualización son los datos del
-usuario (`Documentos\AnsulFlowCalculator\ansulcalc_db.json`), porque viven
+usuario (`Documentos\KitchenSuppressionCalculator\ansulcalc_db.json` (si ya existía la carpeta del nombre anterior, `AnsulFlowCalculator`, se sigue usando esa)), porque viven
 fuera de la carpeta de instalación — sus proyectos, sistemas, riesgos y
 catálogo propio quedan intactos.
 
@@ -175,13 +175,13 @@ en pantalla) — solo hay que cerrar la app y darle click a "Reintentar".
   instalado** — PyInstaller empaqueta un Python completo junto con la
   app.
 - Los datos del usuario (proyectos, sistemas, riesgos, catálogo propio) se
-  siguen guardando en `Documentos\AnsulFlowCalculator\ansulcalc_db.json`,
+  siguen guardando en `Documentos\KitchenSuppressionCalculator\ansulcalc_db.json`,
   fuera de la carpeta de instalación — así que desinstalar y reinstalar
   una versión nueva no borra la información capturada.
 - Si en algún momento quieres un ícono propio para el `.exe` (en vez del
   ícono genérico de Python), consigue un archivo `.ico`, colócalo en
   `packaging/windows/app.ico` y descomenta la línea `icon=` dentro de
-  `AnsulFlowCalculator.spec`.
+  `KitchenSuppressionCalculator.spec`.
 - Antivirus/SmartScreen: como el instalador no está firmado digitalmente
   (firmar cuesta un certificado de terceros), es posible que Windows
   muestre una advertencia de "Editor desconocido" la primera vez que

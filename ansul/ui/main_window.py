@@ -28,7 +28,8 @@ from .unit_converter_dialog import UnitConverterDialog
 from ..i18n import tr
 from .style import set_role
 
-APP_TITLE = tr('Ansul Flow Calculator — ANSUL(R) R-102 / Buckeye Kitchen Mister')
+AUTHOR = 'Miguel Alejandro Gutiérrez Torres'
+APP_TITLE = tr('Kitchen Suppression Calculator — ANSUL(R) R-102 / Buckeye Kitchen Mister')
 DISCLAIMER_SHORT = systems.get(None).disclaimer_short
 
 ROLE_PROJECT = 'project'
@@ -803,7 +804,7 @@ class MainWindow(QMainWindow):
         responsible = self.kitchen_responsible_edit.text().strip()
         date = self.kitchen_date_edit.text().strip() or today_iso()
         self._sync_responsible(responsible)
-        default_name = f"AnsulFlowCalculator_{report.pdf_sanitize_filename(k['name'])}_{date}.pdf"
+        default_name = f"KitchenSuppressionCalculator_{report.pdf_sanitize_filename(k['name'])}_{date}.pdf"
         path, _ = QFileDialog.getSaveFileName(self, tr('Guardar reporte PDF de sistema'), default_name, tr('PDF (*.pdf)'))
         if not path:
             return
@@ -824,7 +825,7 @@ class MainWindow(QMainWindow):
         responsible = self.project_responsible_edit.text().strip()
         date = self.project_date_edit.text().strip() or today_iso()
         self._sync_responsible(responsible)
-        default_name = f"AnsulFlowCalculator_{report.pdf_sanitize_filename(p['name'])}_{date}.pdf"
+        default_name = f"KitchenSuppressionCalculator_{report.pdf_sanitize_filename(p['name'])}_{date}.pdf"
         path, _ = QFileDialog.getSaveFileName(self, tr('Guardar reporte PDF del proyecto'), default_name, tr('PDF (*.pdf)'))
         if not path:
             return
@@ -853,7 +854,7 @@ class MainWindow(QMainWindow):
     # Respaldo / restauración
     # ------------------------------------------------------------------
     def _backup_data(self):
-        default_name = f'AnsulFlowCalculator_respaldo_{today_iso()}.json'
+        default_name = f'KitchenSuppressionCalculator_respaldo_{today_iso()}.json'
         path, _ = QFileDialog.getSaveFileName(self, tr('Guardar respaldo de datos'), default_name, tr('JSON (*.json)'))
         if not path:
             return
@@ -904,11 +905,14 @@ class MainWindow(QMainWindow):
         dlg.exec()
 
     def _show_about(self):
-        QMessageBox.information(self, tr('Acerca de Ansul Flow Calculator'),
-                                 tr('Ansul Flow Calculator\n\nCalculadora de apoyo para el diseño preliminar de sistemas de '
+        QMessageBox.information(self, tr('Acerca de Kitchen Suppression Calculator'),
+                                 tr('Kitchen Suppression Calculator\n\nCalculadora de apoyo para el diseño preliminar de sistemas de '
                                     'supresión para cocinas comerciales:\n• ANSUL(R) R-102 — manual R-102 (Part No. 418087) y '
                                     'Hoja Resumen F-2015158-01_LAS.\n• Buckeye Kitchen Mister — manual técnico BFR-TM Rev. 6 '
                                     '(2020-02-01).\n\nLa marca se elige al crear cada proyecto.\n\n')
+                                 + tr('Autor: {0}\nLicencia: GNU GPL v3.0 — software libre y gratuito. Puede usarse, '
+                                      'copiarse y modificarse; las versiones modificadas que se distribuyan deben '
+                                      'conservar la misma licencia.').format(AUTHOR) + '\n\n'
                                  + DISCLAIMER_SHORT + '\n\n' + systems.get('buckeye_bfr').disclaimer_short)
 
     # ------------------------------------------------------------------

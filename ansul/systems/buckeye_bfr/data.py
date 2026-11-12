@@ -207,7 +207,7 @@ CATEGORY_LABELS = {
 CATEGORY_ORDER = list(CATEGORY_LABELS.keys())
 
 PDF_DISCLAIMER = (
-    tr('Reporte generado con Ansul Flow Calculator como ayuda de diseño preliminar con base en el '
+    tr('Reporte generado con Kitchen Suppression Calculator como ayuda de diseño preliminar con base en el '
        'manual técnico Buckeye Kitchen Mister (BPN: BFR-TM, Rev. 6, 2020-02-01, UL EX 6885). No '
        'sustituye la verificación y responsiva de un distribuidor/diseñador autorizado Buckeye '
        'Fire Equipment conforme a NFPA 17A y los códigos locales aplicables. La tubería, la '

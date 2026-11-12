@@ -1,12 +1,12 @@
 # -*- mode: python ; coding: utf-8 -*-
-# Spec de PyInstaller para Ansul Flow Calculator (Windows).
+# Spec de PyInstaller para Kitchen Suppression Calculator (Windows).
 #
 # Uso (desde Windows, con el venv del proyecto activado, parado en la raíz
 # del repositorio — la carpeta que contiene main.py):
 #
-#   pyinstaller packaging\windows\AnsulFlowCalculator.spec
+#   pyinstaller packaging\windows\KitchenSuppressionCalculator.spec
 #
-# El resultado queda en dist\AnsulFlowCalculator\AnsulFlowCalculator.exe
+# El resultado queda en dist\KitchenSuppressionCalculator\KitchenSuppressionCalculator.exe
 # (modo "onedir": una carpeta con el .exe y sus dependencias — arranca más
 # rápido que el modo "onefile" y es lo que espera installer.iss).
 #
@@ -49,7 +49,7 @@ exe = EXE(
     a.scripts,
     [],
     exclude_binaries=True,
-    name='AnsulFlowCalculator',
+    name='KitchenSuppressionCalculator',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -71,5 +71,5 @@ coll = COLLECT(
     strip=False,
     upx=True,
     upx_exclude=[],
-    name='AnsulFlowCalculator',
+    name='KitchenSuppressionCalculator',
 )

@@ -207,8 +207,8 @@ EN = {
         'Double (No. 423493)',
     'Sistema de 3 o más tanques: se arma con un ensamble de liberación regulada (1 tanque) más actuador(es) regulado(s) adicionales (hasta 3 tanques c/u). El cartucho de la liberación es LT-20-R (1.5 gal) o LT-30-R (3 gal); cada actuador usa cartucho Doble (No. 423493) o LT-A-101-30 (No. 423491) según si los tanques van "manifolded". Existen varias combinaciones válidas — verifique la combinación exacta para su configuración en la Guía de Selección de Sistema (Sección 9, pág. 9-1 a 9-4) del manual R-102.':
         'System with 3 or more tanks: built with a regulated release assembly (1 tank) plus additional regulated actuator(s) (up to 3 tanks each). The release cartridge is LT-20-R (1.5 gal) or LT-30-R (3 gal); each actuator uses a Double cartridge (No. 423493) or LT-A-101-30 (No. 423491) depending on whether the tanks are manifolded. Several combinations are valid — verify the exact combination for your configuration in the System Selection Guide (Section 9, pp. 9-1 to 9-4) of the R-102 manual.',
-    'Reporte generado con Ansul Flow Calculator como ayuda de diseño preliminar con base en el manual ANSUL(R) R-102 (Part No. 418087). No sustituye la verificación, sello y responsiva de un diseñador certificado ANSUL R-102 conforme a NFPA 17A y los codigos locales aplicables. Verifique especificaciones especificas por marca/modelo de equipo antes de instalar.':
-        'Report generated with Ansul Flow Calculator as a preliminary design aid based on the ANSUL(R) R-102 manual (Part No. 418087). It does not replace the review, seal and responsibility of a certified ANSUL R-102 designer per NFPA 17A and applicable local codes. Verify specific appliance brand/model specifications before installing.',
+    'Reporte generado con Kitchen Suppression Calculator como ayuda de diseño preliminar con base en el manual ANSUL(R) R-102 (Part No. 418087). No sustituye la verificación, sello y responsiva de un diseñador certificado ANSUL R-102 conforme a NFPA 17A y los codigos locales aplicables. Verifique especificaciones especificas por marca/modelo de equipo antes de instalar.':
+        'Report generated with Kitchen Suppression Calculator as a preliminary design aid based on the ANSUL(R) R-102 manual (Part No. 418087). It does not replace the review, seal and responsibility of a certified ANSUL R-102 designer per NFPA 17A and applicable local codes. Verify specific appliance brand/model specifications before installing.',
     'Gas':
         'Gas',
     'Eléctrico':
@@ -357,10 +357,10 @@ EN = {
         'Duct — three-flow option (1W + 2W)',
     'Ducto grande (perímetro > 135 in) — ESTIMACIÓN conservadora de {0} boquillas 2W por ducto. Verifique manualmente contra las Gráficas 4-1/4-2 del manual R-102 o consulte a ANSUL antes de instalar.':
         'Large duct (perimeter > 135 in) — conservative ESTIMATE of {0} 2W nozzles per duct. Verify manually against Charts 4-1/4-2 of the R-102 manual or consult ANSUL before installing.',
-    'Ansul Flow Calculator — Reporte de cálculo':
-        'Ansul Flow Calculator — Calculation report',
-    'Ansul Flow Calculator — Reporte general del proyecto':
-        'Ansul Flow Calculator — Project summary report',
+    'Kitchen Suppression Calculator — Reporte de cálculo':
+        'Kitchen Suppression Calculator — Calculation report',
+    'Kitchen Suppression Calculator — Reporte general del proyecto':
+        'Kitchen Suppression Calculator — Project summary report',
     'Responsable: {0}&nbsp;&nbsp;&nbsp;&nbsp;Fecha: {1}':
         'Prepared by: {0}&nbsp;&nbsp;&nbsp;&nbsp;Date: {1}',
     'Riesgos, ductos y plenos':
@@ -403,8 +403,8 @@ EN = {
         'The brand of a project that already has hazards cannot be changed.',
     'Sistema sin nombre':
         'Untitled system',
-    'El archivo no tiene el formato esperado de un respaldo de Ansul Flow Calculator.':
-        'The file is not in the expected Ansul Flow Calculator backup format.',
+    'El archivo no tiene el formato esperado de un respaldo de Kitchen Suppression Calculator.':
+        'The file is not in the expected Kitchen Suppression Calculator backup format.',
     '{0} (copia)':
         '{0} (copy)',
     'Marca desconocida: {0}':
@@ -505,8 +505,8 @@ EN = {
         'Cooking grate depth (in)',
     '195 psig (1344 kPa) @ 70 °F (21 °C), nitrógeno seco (p. 2-1)':
         '195 psig (1344 kPa) @ 70 °F (21 °C), dry nitrogen (p. 2-1)',
-    'Reporte generado con Ansul Flow Calculator como ayuda de diseño preliminar con base en el manual técnico Buckeye Kitchen Mister (BPN: BFR-TM, Rev. 6, 2020-02-01, UL EX 6885). No sustituye la verificación y responsiva de un distribuidor/diseñador autorizado Buckeye Fire Equipment conforme a NFPA 17A y los códigos locales aplicables. La tubería, la detección y el apuntado de boquillas deben verificarse contra el manual antes de instalar.':
-        'Report generated with Ansul Flow Calculator as a preliminary design aid based on the Buckeye Kitchen Mister technical manual (BPN: BFR-TM, Rev. 6, 2020-02-01, UL EX 6885). It does not replace the review and responsibility of an authorized Buckeye Fire Equipment distributor/designer per NFPA 17A and applicable local codes. Piping, detection and nozzle aiming must be verified against the manual before installing.',
+    'Reporte generado con Kitchen Suppression Calculator como ayuda de diseño preliminar con base en el manual técnico Buckeye Kitchen Mister (BPN: BFR-TM, Rev. 6, 2020-02-01, UL EX 6885). No sustituye la verificación y responsiva de un distribuidor/diseñador autorizado Buckeye Fire Equipment conforme a NFPA 17A y los códigos locales aplicables. La tubería, la detección y el apuntado de boquillas deben verificarse contra el manual antes de instalar.':
+        'Report generated with Kitchen Suppression Calculator as a preliminary design aid based on the Buckeye Kitchen Mister technical manual (BPN: BFR-TM, Rev. 6, 2020-02-01, UL EX 6885). It does not replace the review and responsibility of an authorized Buckeye Fire Equipment distributor/designer per NFPA 17A and applicable local codes. Piping, detection and nozzle aiming must be verified against the manual before installing.',
     'Toda la tubería debe ser de 3/8 in (17.1 mm OD) o 1/2 in (21.3 mm OD); volumen: 37.5 mL/ft (3/8) y 59.8 mL/ft (1/2).':
         'All piping must be 3/8 in (17.1 mm OD) or 1/2 in (21.3 mm OD); volume: 37.5 mL/ft (3/8) and 59.8 mL/ft (1/2).',
     'Tubería cédula 40 negra, cromada o de acero inoxidable; conexiones clase 150 lb (p. 2-9 / 3-13).':
@@ -967,8 +967,8 @@ EN = {
         'Save data backup',
     'Restaurar respaldo de datos':
         'Restore data backup',
-    'Acerca de Ansul Flow Calculator':
-        'About Ansul Flow Calculator',
+    'Acerca de Kitchen Suppression Calculator':
+        'About Kitchen Suppression Calculator',
     'No. de cotización:':
         'Quote No.:',
     'Sistemas de este proyecto:':
@@ -1041,8 +1041,10 @@ EN = {
         'The report was saved to:\n{0}\n\nOpen it now?',
     'Se guardó el respaldo en:\n{0}':
         'The backup was saved to:\n{0}',
-    'Ansul Flow Calculator\n\nCalculadora de apoyo para el diseño preliminar de sistemas de supresión para cocinas comerciales:\n• ANSUL(R) R-102 — manual R-102 (Part No. 418087) y Hoja Resumen F-2015158-01_LAS.\n• Buckeye Kitchen Mister — manual técnico BFR-TM Rev. 6 (2020-02-01).\n\nLa marca se elige al crear cada proyecto.\n\n':
-        'Ansul Flow Calculator\n\nSupport calculator for the preliminary design of commercial kitchen fire suppression systems:\n• ANSUL(R) R-102 — R-102 manual (Part No. 418087) and Summary Sheet F-2015158-01_LAS.\n• Buckeye Kitchen Mister — BFR-TM technical manual Rev. 6 (2020-02-01).\n\nThe brand is chosen when each project is created.\n\n',
+    'Kitchen Suppression Calculator\n\nCalculadora de apoyo para el diseño preliminar de sistemas de supresión para cocinas comerciales:\n• ANSUL(R) R-102 — manual R-102 (Part No. 418087) y Hoja Resumen F-2015158-01_LAS.\n• Buckeye Kitchen Mister — manual técnico BFR-TM Rev. 6 (2020-02-01).\n\nLa marca se elige al crear cada proyecto.\n\n':
+        'Kitchen Suppression Calculator\n\nSupport calculator for the preliminary design of commercial kitchen fire suppression systems:\n• ANSUL(R) R-102 — R-102 manual (Part No. 418087) and Summary Sheet F-2015158-01_LAS.\n• Buckeye Kitchen Mister — BFR-TM technical manual Rev. 6 (2020-02-01).\n\nThe brand is chosen when each project is created.\n\n',
+    'Autor: {0}\nLicencia: GNU GPL v3.0 — software libre y gratuito. Puede usarse, copiarse y modificarse; las versiones modificadas que se distribuyan deben conservar la misma licencia.':
+        'Author: {0}\nLicense: GNU GPL v3.0 — free software, free of charge. It may be used, copied and modified; modified versions that are distributed must keep the same license.',
     'Tanque de {0} gal × {1}':
         '{0} gal tank × {1}',
     'Flujo máx. (línea supl.)':

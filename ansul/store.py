@@ -340,7 +340,7 @@ class Store:
         with open(path, 'r', encoding='utf-8') as f:
             incoming = json.load(f)
         if not isinstance(incoming, dict) or 'projects' not in incoming:
-            raise ValueError(tr('El archivo no tiene el formato esperado de un respaldo de Ansul Flow Calculator.'))
+            raise ValueError(tr('El archivo no tiene el formato esperado de un respaldo de Kitchen Suppression Calculator.'))
         self.data = incoming
         for p in self.data['projects']:
             if not systems.is_valid(p.get('system')):

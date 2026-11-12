@@ -148,7 +148,7 @@ def build_kitchen_report_pdf(project, kitchen, out_path, responsible='', date=No
     doc = SimpleDocTemplate(str(out_path), pagesize=letter,
                              leftMargin=MARGIN, rightMargin=MARGIN, topMargin=MARGIN, bottomMargin=MARGIN)
     story = []
-    _header_block(story, tr('Ansul Flow Calculator — Reporte de cálculo'), system.report_subtitle,
+    _header_block(story, tr('Kitchen Suppression Calculator — Reporte de cálculo'), system.report_subtitle,
                   project['name'], tr('Proyecto: {0}&nbsp;&nbsp;&nbsp;&nbsp;Sistema: {1}').format(project['name'], kitchen['name']),
                   responsible, date, quote_number)
 
@@ -186,7 +186,7 @@ def build_project_report_pdf(project, out_path, responsible='', date=None, quote
     doc = SimpleDocTemplate(str(out_path), pagesize=letter,
                              leftMargin=MARGIN, rightMargin=MARGIN, topMargin=MARGIN, bottomMargin=MARGIN)
     story = []
-    _header_block(story, tr('Ansul Flow Calculator — Reporte general del proyecto'), system.report_subtitle,
+    _header_block(story, tr('Kitchen Suppression Calculator — Reporte general del proyecto'), system.report_subtitle,
                   project['name'], tr('Proyecto: {0}&nbsp;&nbsp;&nbsp;&nbsp;Sistemas: {1}').format(project['name'], len(project['kitchens'])),
                   responsible, date, quote_number)
 
