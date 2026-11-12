@@ -18,6 +18,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  PYTHONUTF8: '1'   # acentos y símbolos en la consola de Windows
+
 jobs:
   windows:
     name: Windows (instalador .exe)
